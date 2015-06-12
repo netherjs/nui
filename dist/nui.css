@@ -1,0 +1,74 @@
+
+.NUI-Widget,
+.NUI-Widget * {
+	box-sizing:border-box;
+}
+
+.NUI-Widget {
+	font-family:
+		HelveticaNeue-Light,
+		'Helvetica Neue Light', 'Helvetica Neue',
+		'Segoe UI Light', 'Segoe UI',
+		'Open Sans', 'Dejavu Sans',
+		Helvetica, Arial,
+		sans-serif;
+}
+
+.NUI-Center { text-align:center; }
+.NUI-Hidden { display:none; }
+
+/*/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////*/
+
+.NUI-Overlay {
+	position:fixed;
+	top:0px; left:0px;
+	bottom:0px; right:0px;
+	
+	background:rgba(0,0,0,0.75);
+	z-index:9001;
+}
+
+/*/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////*/
+
+.NUI-Dialog {
+	position:fixed;
+	top:50px; left:50px;
+	
+	border:1px solid #fff;
+	border-radius:10px;
+	background:rgba(255,255,255,0.75);
+	min-width:300px;
+	max-width:400px;
+	margin:0px;
+	padding:0px;
+	overflow:hidden;
+}
+
+.NUI-Dialog header {
+	background:#fff;
+	font-weight:bold;
+	padding:10px;
+}
+
+.NUI-Dialog section {
+	padding:10px;
+}
+
+.NUI-Dialog footer {
+	background:#fff;
+	padding:10px;
+	text-align:right;
+}
+
+.NUI-Dialog footer button {
+	margin-left:10px;
+}
+
+/*/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////*/
+
+.NUI-Button {
+
+}
