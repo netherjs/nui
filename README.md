@@ -19,7 +19,9 @@ Creates a button widget, which you can shove in the dialog.
 
 # Sample
 
-![it working](http://i.imgur.com/hYN2O5J.png?1)(http://i.imgur.com/hYN2O5J.png)
+![it working](http://i.imgur.com/hYN2O5J.png?1)
+
+Full Size: http://i.imgur.com/hYN2O5J.png
 
 	<html>
 	<head>
