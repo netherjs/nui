@@ -159,6 +159,7 @@ NUI.Dialog = function(opt) {
 		Container: null,
 		Title: 'NUI Dialog',
 		Content: 'This is a dialog.',
+		Class: null,
 		OnAccept: null,
 		OnCancel: null,
 		Buttons: []
@@ -174,6 +175,7 @@ NUI.Dialog = function(opt) {
 			jQuery('<div />')
 			.addClass('NUI-Widget')
 			.addClass('NUI-Dialog')
+			.addClass(Property.Class)
 		),
 		TitleBar: (
 			jQuery('<header />')
@@ -211,7 +213,6 @@ NUI.Dialog = function(opt) {
 		if(Property.OnAccept)
 		Property.OnAccept();
 		
-		Struct.Root.hide();		
 		return this;
 	};
 	
@@ -224,8 +225,7 @@ NUI.Dialog = function(opt) {
 		
 		if(Property.OnCancel)
 		Property.OnCancel();
-		
-		Struct.Root.hide();
+
 		return this;
 	};
 	
@@ -286,32 +286,34 @@ NUI.Overlay = function(opt) {
 
 	var Property = {
 		Container: 'body',
-		Content: null
+		Content: null,
+		Show: true
 	};
-	
-	NUI.Util.MergeProperties(opt,Property);	
+
+	NUI.Util.MergeProperties(opt,Property);
 
 	////////////////
 	////////////////
 
 	var Struct = {
-		Container: (
+		Root: (
 			jQuery('<div />')
 			.addClass('NUI-Widget')
 			.addClass('NUI-Overlay')
+			.addClass((Property.Show===true)?('NUI-Block'):('NUI-Hidden'))
 		)
 	};
-	
+
 	jQuery(Property.Container).append(
-		Struct.Container
+		Struct.Root
 		.append(Property.Content.valueOf())
 	);
-	
+
 	NUI.Util.CenterInParent(Property.Content.valueOf());
 
 	////////////////
 	////////////////
-	
+
 	this.Get = function() {
 	/*//
 	@return jQuery(<div>)
@@ -319,38 +321,38 @@ NUI.Overlay = function(opt) {
 	get this for interacting with the widget via jQuery.
 	//*/
 
-		return Struct.Container;
+		return Struct.Root;
 	};
-	
+
 	this.Hide = function() {
 	/*//
 	@return self
 	tell the overlay to go away for now.
 	//*/
-	
-		Struct.Container.hide();
+
+		Struct.Root.hide();
 		return this;
 	};
-	
+
 	this.Show = function() {
 	/*//
 	@return self
 	tell the overlay to come back. also centers whatever is inside it.
 	//*/
-	
-		Struct.Container.show();
+
+		Struct.Root.show();
 		NUI.Util.CenterInParent(Property.Content.valueOf());
 		return this;
 	};
-	
+
 	this.Destroy = function() {
 	/*//
 	@return self
 	hide and remove the widget from the dom. use when done with it.
 	//*/
-	
-		this.Hide();		
-		Struct.Container.remove();		
+
+		this.Hide();
+		Struct.Root.remove();
 		return this;
 	}
 

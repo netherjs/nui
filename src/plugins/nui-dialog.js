@@ -10,6 +10,7 @@ NUI.Dialog = function(opt) {
 		Container: null,
 		Title: 'NUI Dialog',
 		Content: 'This is a dialog.',
+		Class: null,
 		OnAccept: null,
 		OnCancel: null,
 		Buttons: []
@@ -25,6 +26,7 @@ NUI.Dialog = function(opt) {
 			jQuery('<div />')
 			.addClass('NUI-Widget')
 			.addClass('NUI-Dialog')
+			.addClass(Property.Class)
 		),
 		TitleBar: (
 			jQuery('<header />')
@@ -62,7 +64,6 @@ NUI.Dialog = function(opt) {
 		if(Property.OnAccept)
 		Property.OnAccept();
 		
-		Struct.Root.hide();		
 		return this;
 	};
 	
@@ -75,8 +76,7 @@ NUI.Dialog = function(opt) {
 		
 		if(Property.OnCancel)
 		Property.OnCancel();
-		
-		Struct.Root.hide();
+
 		return this;
 	};
 	
