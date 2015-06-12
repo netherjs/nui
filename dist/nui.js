@@ -1,13 +1,22 @@
-// C:\Users\bob\Desktop\nui\www\nui/src/nui-main.js
-
+//// src/nui-main.js //////////////////////////////////////////////////////////
+/*// NUI - Nether UI //////////////////////////////////////////////////////////
+The framework made by someone who hates Javascript for people who hate
+Javascript. This here is the main file. Currently it does not do much except
+pop open the placeholder object for the other programs to screw with. I'm sure
+it will look more useful in the future.
+/////////////////////////////////////////////////////////////////////////////*/
 
 var NUI = {
 	GetVersion: function() { return '1.0.0'; }
 };
 
 
-// C:\Users\bob\Desktop\nui\www\nui/src/nui-util.js
-
+//// src/nui-util.js //////////////////////////////////////////////////////////
+/*// NUI Utility //////////////////////////////////////////////////////////////
+This contains utility methods that will be used in various parts of the
+framework to prevent duplication. But I shouldn't have to explain
+software engineering theory to you, i'm sure you got it.
+/////////////////////////////////////////////////////////////////////////////*/
 
 NUI.Util = {
 	
@@ -59,8 +68,10 @@ NUI.Util = {
 };
 
 
-// C:\Users\bob\Desktop\nui\www\nui/src/plugins/nui-button.js
-
+//// plugins/nui-button.js ////////////////////////////////////////////////////
+/*// NUI.Button ///////////////////////////////////////////////////////////////
+This provides a button widget that can do stuff when clicked. Amazing.
+/////////////////////////////////////////////////////////////////////////////*/
 
 NUI.Button = function(opt) {
 
@@ -96,17 +107,37 @@ NUI.Button = function(opt) {
 	////////////////
 	////////////////
 	
-	this.Get=
-	function() {
+	this.Get = function() {
+	/*//
+	@return jQuery(<div>)
+	return the main container object that makes up this widget. you would
+	get this for interacting with the widget via jQuery.
+	//*/
+
 		return Struct.Container;
 	};
 	
-	this.Show=
-	function() {
+	this.Show = function() {
+	/*//
+	@return self
+	tell the widget to show itself.
+	//*/
+
 		Struct.Container.Show();
 		return this;
 	};
 
+
+	this.Hide = function() {
+	/*//
+	@return self
+	tell the widget to hide itself.
+	//*/
+
+		Struct.Container.hide();
+		return;
+	};
+	
 	return;
 };
 
@@ -115,8 +146,12 @@ NUI.Button.prototype.valueOf = function() {
 }
 
 
-// C:\Users\bob\Desktop\nui\www\nui/src/plugins/nui-dialog.js
-
+//// plugins/nui-dialog.js ////////////////////////////////////////////////////
+/*// NUI.Dialog ///////////////////////////////////////////////////////////////
+This provides a widget which looks and smells like a dialog. It currently is
+not movable but that is a planned feature. Right now the most useful thing to
+do with this is to shove it into a NUI.Overlay.
+/////////////////////////////////////////////////////////////////////////////*/
 
 NUI.Dialog = function(opt) {
 	
@@ -152,38 +187,46 @@ NUI.Dialog = function(opt) {
 			jQuery('<footer />')
 		)
 	};
-	
-	Struct.Root
-	.append(Struct.TitleBar)
-	.append(Struct.Content)
-	.append(Struct.ButtonBar);
-	
+
 	jQuery.each(Property.Buttons,function(){
 		Struct.ButtonBar
 		.append(this.valueOf());
 	});
 	
+	Struct.Root
+	.append(Struct.TitleBar)
+	.append(Struct.Content)
+	.append(Struct.ButtonBar);
+
 	////////////////
 	////////////////
 	
-	this.Accept=
-	function() {
+	this.Accept = function() {
+	/*//
+	@return self
+	tell the widget that the user has accepted whatever the dialog was about
+	and to execute the OnAccept action if any.
+	//*/
 		
 		if(Property.OnAccept)
 		Property.OnAccept();
 		
 		Struct.Root.hide();		
-		return;
+		return this;
 	};
 	
-	this.Cancel=
-	function() {
+	this.Cancel = function() {
+	/*//
+	@return self
+	tell the widget that the user has canceled whatever the dialog was about
+	and to execute the OnCancel action if any.
+	//*/
 		
 		if(Property.OnCancel)
 		Property.OnCancel();
 		
 		Struct.Root.hide();
-		return;			
+		return this;
 	};
 	
 	Struct.Root.find('.NUI-Dialog-Accept')
@@ -195,17 +238,36 @@ NUI.Dialog = function(opt) {
 	////////////////
 	////////////////
 	
-	this.Get=
-	function() {
+	this.Get = function() {
+	/*//
+	@return jQuery(<div>)
+	return the main container object that makes up this widget. you would
+	get this for interacting with the widget via jQuery.
+	//*/
+
 		return Struct.Root;	
 	};
 	
-	this.Show=
-	function() {
+	this.Show = function() {
+	/*//
+	@return self
+	tell the widget to show itself.
+	//*/
+
 		Struct.Root.show();
 		return;
 	};
-	
+
+	this.Hide = function() {
+	/*//
+	@return self
+	tell the widget to hide itself.
+	//*/
+
+		Struct.Root.hide();
+		return;
+	};
+
 };
 
 NUI.Dialog.prototype.valueOf = function() {
@@ -213,8 +275,12 @@ NUI.Dialog.prototype.valueOf = function() {
 };
 
 
-// C:\Users\bob\Desktop\nui\www\nui/src/plugins/nui-overlay.js
-
+//// plugins/nui-overlay.js ///////////////////////////////////////////////////
+/*// NUI.OVerlay //////////////////////////////////////////////////////////////
+This provides a widget which covers the entire screen in (with my default css)
+a translucent shade of black, blocking access to anything below. You can then
+put things inside of it that demand attention.
+/////////////////////////////////////////////////////////////////////////////*/
 
 NUI.Overlay = function(opt) {
 
@@ -222,7 +288,7 @@ NUI.Overlay = function(opt) {
 		Container: 'body',
 		Content: null
 	};
-
+	
 	NUI.Util.MergeProperties(opt,Property);	
 
 	////////////////
@@ -246,33 +312,53 @@ NUI.Overlay = function(opt) {
 	////////////////
 	////////////////
 	
-	this.Get=
-	function() {
+	this.Get = function() {
+	/*//
+	@return jQuery(<div>)
+	return the main container object that makes up this widget. you would
+	get this for interacting with the widget via jQuery.
+	//*/
+
 		return Struct.Container;
 	};
 	
-	this.Hide=
-	function() {
+	this.Hide = function() {
+	/*//
+	@return self
+	tell the overlay to go away for now.
+	//*/
+	
 		Struct.Container.hide();
 		return this;
 	};
 	
-	this.Show=
-	function() {
+	this.Show = function() {
+	/*//
+	@return self
+	tell the overlay to come back. also centers whatever is inside it.
+	//*/
+	
 		Struct.Container.show();
 		NUI.Util.CenterInParent(Property.Content.valueOf());
-		
 		return this;
 	};
 	
-	this.Destroy=
-	function() {
-		this.Hide();
-		
+	this.Destroy = function() {
+	/*//
+	@return self
+	hide and remove the widget from the dom. use when done with it.
+	//*/
+	
+		this.Hide();		
 		Struct.Container.remove();		
-		return;
+		return this;
 	}
 
 };
+
+NUI.Overlay.prototype.valueOf = function() {
+	return this.Get();
+};
+
 
 

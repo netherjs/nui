@@ -1,3 +1,6 @@
+/*// NUI.Button ///////////////////////////////////////////////////////////////
+This provides a button widget that can do stuff when clicked. Amazing.
+/////////////////////////////////////////////////////////////////////////////*/
 
 NUI.Button = function(opt) {
 
@@ -33,17 +36,37 @@ NUI.Button = function(opt) {
 	////////////////
 	////////////////
 	
-	this.Get=
-	function() {
+	this.Get = function() {
+	/*//
+	@return jQuery(<div>)
+	return the main container object that makes up this widget. you would
+	get this for interacting with the widget via jQuery.
+	//*/
+
 		return Struct.Container;
 	};
 	
-	this.Show=
-	function() {
+	this.Show = function() {
+	/*//
+	@return self
+	tell the widget to show itself.
+	//*/
+
 		Struct.Container.Show();
 		return this;
 	};
 
+
+	this.Hide = function() {
+	/*//
+	@return self
+	tell the widget to hide itself.
+	//*/
+
+		Struct.Container.hide();
+		return;
+	};
+	
 	return;
 };
 

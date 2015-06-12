@@ -1,3 +1,8 @@
+/*// NUI.OVerlay //////////////////////////////////////////////////////////////
+This provides a widget which covers the entire screen in (with my default css)
+a translucent shade of black, blocking access to anything below. You can then
+put things inside of it that demand attention.
+/////////////////////////////////////////////////////////////////////////////*/
 
 NUI.Overlay = function(opt) {
 
@@ -5,7 +10,7 @@ NUI.Overlay = function(opt) {
 		Container: 'body',
 		Content: null
 	};
-
+	
 	NUI.Util.MergeProperties(opt,Property);	
 
 	////////////////
@@ -29,31 +34,51 @@ NUI.Overlay = function(opt) {
 	////////////////
 	////////////////
 	
-	this.Get=
-	function() {
+	this.Get = function() {
+	/*//
+	@return jQuery(<div>)
+	return the main container object that makes up this widget. you would
+	get this for interacting with the widget via jQuery.
+	//*/
+
 		return Struct.Container;
 	};
 	
-	this.Hide=
-	function() {
+	this.Hide = function() {
+	/*//
+	@return self
+	tell the overlay to go away for now.
+	//*/
+	
 		Struct.Container.hide();
 		return this;
 	};
 	
-	this.Show=
-	function() {
+	this.Show = function() {
+	/*//
+	@return self
+	tell the overlay to come back. also centers whatever is inside it.
+	//*/
+	
 		Struct.Container.show();
 		NUI.Util.CenterInParent(Property.Content.valueOf());
-		
 		return this;
 	};
 	
-	this.Destroy=
-	function() {
-		this.Hide();
-		
+	this.Destroy = function() {
+	/*//
+	@return self
+	hide and remove the widget from the dom. use when done with it.
+	//*/
+	
+		this.Hide();		
 		Struct.Container.remove();		
-		return;
+		return this;
 	}
 
 };
+
+NUI.Overlay.prototype.valueOf = function() {
+	return this.Get();
+};
+

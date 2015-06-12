@@ -18,9 +18,16 @@ array_unshift($filelist,sprintf(
 
 ob_start();
 foreach($filelist as $file) {
-	echo "// {$file}\n\n";
+	$line = sprintf(
+		"//// %s ",
+		trim(str_replace(dirname(dirname($file)),'',$file),'/')
+	);
+	
+	$line .= str_repeat('/',(79-strlen($line)));
+	echo $line, PHP_EOL;
+	
 	echo file_get_contents($file);
-	echo "\n\n";
+	echo PHP_EOL, PHP_EOL;
 }
 $data = ob_get_clean();
 

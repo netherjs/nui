@@ -1,3 +1,8 @@
+/*// NUI Utility //////////////////////////////////////////////////////////////
+This contains utility methods that will be used in various parts of the
+framework to prevent duplication. But I shouldn't have to explain
+software engineering theory to you, i'm sure you got it.
+/////////////////////////////////////////////////////////////////////////////*/
 
 NUI.Util = {
 	
