@@ -19,6 +19,23 @@ Creates a button widget, which you can shove in the dialog.
 
 # Sample
 
+	<html>
+	<head>
+		<title>nui test</title>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="/nui/dist/nui.css" />
+		<script type="text/javascript" src="/nui/dist/nui.js.php"></script>
+		<link rel="stylesheet" type="text/css" href="<?php $surface->FromCommon('design.css') ?>" />
+	</head>
+	<body>
+	
+	<div id="MyInputForm" class="NUI-Hidden">
+		<p>We could have jQuery built this form live, have it in a saved factory,
+		built a class emulating NUI classes, or just have had it embedded like right
+		now.</p>
+		<div class="NUI-Center">Enter Stuff: <input id="MyInputField" type="text" /></div>
+	</div>
+	
 	<script type="text/javascript">
 	var ModalOverlay = new NUI.Overlay({
 		Content: new NUI.Dialog({
@@ -38,6 +55,28 @@ Creates a button widget, which you can shove in the dialog.
 			}
 		})
 	});
+	
+	function LocalSaveData(callback) {
+		var input = jQuery('#MyInputField').val();
+		
+		/*//
+		jQuery.post(
+			'/your/api/whatever',
+			{ Field:input },
+			function(result) {
+				if(result && !result.Error)
+				callback();
+			}
+		);
+		//*/
+			
+		alert(input);
+		callback();
+		return;
+	}
 	</script>
+	
+	</body>
+	</html>
 	
 
