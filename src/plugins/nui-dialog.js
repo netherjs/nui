@@ -7,12 +7,12 @@ do with this is to shove it into a NUI.Overlay.
 NUI.Dialog = function(opt) {
 	
 	var Property = {
-		Container: null,
+		Container: 'body',
 		Title: 'NUI Dialog',
 		Content: 'This is a dialog.',
 		Class: null,
 		Show: true,
-		Move: true,
+		Moveable: true,
 		OnAccept: null,
 		OnCancel: null,
 		Buttons: []
@@ -44,21 +44,26 @@ NUI.Dialog = function(opt) {
 		)
 	};
 
+	// compile the button bar.
 	jQuery.each(Property.Buttons,function(){
 		Struct.ButtonBar
 		.append(this.valueOf());
 	});
 	
+	// compile the dialog.
 	Struct.Root
 	.append(Struct.TitleBar)
 	.append(Struct.Content)
 	.append(Struct.ButtonBar);
 	
-	if(Property.Move) {
-		Struct.TitleBar
-		.on('mousedown',function(){ NUI.Move.Register(Struct.Root); })
-		.on('mouseup',function(){ NUI.Move.Unregister(Struct.Root); });	
-	}
+	// apply settings.
+	if(Property.Moveable) Struct.TitleBar
+	.on('mousedown',function(){ NUI.Move.Register(Struct.Root); })
+	.on('mouseup',function(){ NUI.Move.Unregister(Struct.Root); });	
+	
+	// add the elmeent into the dom.
+	if(Property.Container)
+	jQuery(Property.Container).append(Struct.Root);
 
 	////////////////
 	////////////////

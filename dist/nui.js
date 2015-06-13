@@ -18,8 +18,16 @@ var NUI = {
 	//*/
 
 		Queue: [],
-		LastX: 0,
-		LastY: 0,
+		/*//
+		@type array
+		a list of all the objects that which to be moved.
+		//*/
+		
+		LastX: 0, LastY: 0,
+		/*//
+		@type int
+		the last known position of the mouse prior to the current move.
+		//*/
 		
 		On:
 		function(e){
@@ -37,6 +45,7 @@ var NUI = {
 			if(this.Queue.length)
 			jQuery.each(this.Queue,function(key,object){
 				object.offset(function(idx,pos){
+					object.attr('nui-moved','true');
 					return {
 						left: (pos.left - DeltaX),
 						top: (pos.top - DeltaY)
@@ -248,12 +257,12 @@ do with this is to shove it into a NUI.Overlay.
 NUI.Dialog = function(opt) {
 	
 	var Property = {
-		Container: null,
+		Container: 'body',
 		Title: 'NUI Dialog',
 		Content: 'This is a dialog.',
 		Class: null,
 		Show: true,
-		Move: true,
+		Moveable: true,
 		OnAccept: null,
 		OnCancel: null,
 		Buttons: []
@@ -285,21 +294,26 @@ NUI.Dialog = function(opt) {
 		)
 	};
 
+	// compile the button bar.
 	jQuery.each(Property.Buttons,function(){
 		Struct.ButtonBar
 		.append(this.valueOf());
 	});
 	
+	// compile the dialog.
 	Struct.Root
 	.append(Struct.TitleBar)
 	.append(Struct.Content)
 	.append(Struct.ButtonBar);
 	
-	if(Property.Move) {
-		Struct.TitleBar
-		.on('mousedown',function(){ NUI.Move.Register(Struct.Root); })
-		.on('mouseup',function(){ NUI.Move.Unregister(Struct.Root); });	
-	}
+	// apply settings.
+	if(Property.Moveable) Struct.TitleBar
+	.on('mousedown',function(){ NUI.Move.Register(Struct.Root); })
+	.on('mouseup',function(){ NUI.Move.Unregister(Struct.Root); });	
+	
+	// add the elmeent into the dom.
+	if(Property.Container)
+	jQuery(Property.Container).append(Struct.Root);
 
 	////////////////
 	////////////////
@@ -389,7 +403,8 @@ NUI.Overlay = function(opt) {
 		Container: 'body',
 		Content: null,
 		Class: null,
-		Show: true
+		Show: true,
+		HandleResize: true
 	};
 
 	NUI.Util.MergeProperties(opt,Property);
@@ -407,11 +422,26 @@ NUI.Overlay = function(opt) {
 		)
 	};
 
-	jQuery(Property.Container).append(
-		Struct.Root
-		.append(Property.Content.valueOf())
-	);
+	// compile the element.
+	Struct.Root
+	.append(Property.Content.valueOf());
+	
+	// allow repositioning when window size changes.
+	if(Property.HandleResize) jQuery(window)
+	.on('resize',function(){
+		var element = Property.Content.valueOf();
+		
+		if(!element.attr('nui-moved'))
+		NUI.Util.CenterInParent(Property.Content.valueOf());
+		
+		return;
+	});
+	
+	// add the elmeent into the dom.
+	if(Property.Container) jQuery(Property.Container)
+	.append(Struct.Root);
 
+	// center the child.
 	NUI.Util.CenterInParent(Property.Content.valueOf());
 
 	////////////////

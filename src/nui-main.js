@@ -17,8 +17,16 @@ var NUI = {
 	//*/
 
 		Queue: [],
-		LastX: 0,
-		LastY: 0,
+		/*//
+		@type array
+		a list of all the objects that which to be moved.
+		//*/
+		
+		LastX: 0, LastY: 0,
+		/*//
+		@type int
+		the last known position of the mouse prior to the current move.
+		//*/
 		
 		On:
 		function(e){
@@ -36,6 +44,7 @@ var NUI = {
 			if(this.Queue.length)
 			jQuery.each(this.Queue,function(key,object){
 				object.offset(function(idx,pos){
+					object.attr('nui-moved','true');
 					return {
 						left: (pos.left - DeltaX),
 						top: (pos.top - DeltaY)

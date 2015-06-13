@@ -10,7 +10,8 @@ NUI.Overlay = function(opt) {
 		Container: 'body',
 		Content: null,
 		Class: null,
-		Show: true
+		Show: true,
+		HandleResize: true
 	};
 
 	NUI.Util.MergeProperties(opt,Property);
@@ -28,11 +29,26 @@ NUI.Overlay = function(opt) {
 		)
 	};
 
-	jQuery(Property.Container).append(
-		Struct.Root
-		.append(Property.Content.valueOf())
-	);
+	// compile the element.
+	Struct.Root
+	.append(Property.Content.valueOf());
+	
+	// allow repositioning when window size changes.
+	if(Property.HandleResize) jQuery(window)
+	.on('resize',function(){
+		var element = Property.Content.valueOf();
+		
+		if(!element.attr('nui-moved'))
+		NUI.Util.CenterInParent(Property.Content.valueOf());
+		
+		return;
+	});
+	
+	// add the elmeent into the dom.
+	if(Property.Container) jQuery(Property.Container)
+	.append(Struct.Root);
 
+	// center the child.
 	NUI.Util.CenterInParent(Property.Content.valueOf());
 
 	////////////////
