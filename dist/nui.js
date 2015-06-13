@@ -7,8 +7,100 @@ it will look more useful in the future.
 /////////////////////////////////////////////////////////////////////////////*/
 
 var NUI = {
-	GetVersion: function() { return '1.0.0'; }
+	
+	GetVersion:
+	function() { return '1.0.0'; },
+
+	Move: {
+	/*//
+	this subobject will hold the API for allowing for and moving any widgets
+	which wish to be moved around the screen by dragging them around.
+	//*/
+
+		Queue: [],
+		LastX: 0,
+		LastY: 0,
+		
+		On:
+		function(e){
+		/*//
+		@argv Event EventObject
+		handle moving any widgets which have requested to be moved. this
+		queue system will allow us to select multiple things to move at
+		once if we so choose to do so later, maybe like for some icon list
+		or whatever.
+		//*/
+			
+			var DeltaX = this.LastX - e.clientX;
+			var DeltaY = this.LastY - e.clientY;
+			
+			if(this.Queue.length)
+			jQuery.each(this.Queue,function(key,object){
+				object.offset(function(idx,pos){
+					return {
+						left: (pos.left - DeltaX),
+						top: (pos.top - DeltaY)
+					};
+				});
+			});
+			
+			this.LastX = e.clientX;
+			this.LastY = e.clientY;
+			return;
+		},
+		
+		Register:
+		function(object){
+		/*//
+		@argv jQuery Object
+		add something to the list of things that wants to be moved around
+		so that it can be processed later.
+		//*/
+		
+			var found = false;
+			jQuery.each(this.Queue,function(key,value){
+				if(value === object) found = true;
+			});
+			
+			if(!found) {
+				jQuery('body').addClass('NUI-NoSelect');
+				this.Queue.push(object);
+			}
+			
+			return;
+		},
+		
+		Unregister:
+		function(object){
+		/*//
+		@argv jQuery Object
+		remove something from the list of things that wants to be moved
+		around so that it stops moving around.
+		//*/
+		
+			var found = false;
+			var that = this;
+			jQuery.each(this.Queue,function(key,value){
+				if(value === object) {
+					that.Queue.splice(key,1);
+				}
+			});
+			
+			if(!that.Queue.length)
+			jQuery('body').removeClass('NUI-NoSelect');
+			
+			return;		
+		}		
+	}
+
 };
+
+jQuery(document).ready(function(){
+	
+	jQuery(this)
+	.on('mousemove',function(e){ NUI.Move.On(e); });
+	
+});
 
 
 //// src/nui-util.js //////////////////////////////////////////////////////////
@@ -87,7 +179,7 @@ NUI.Button = function(opt) {
 	////////////////
 	
 	var Struct = {
-		Container: (
+		Root: (
 			jQuery('<button />')
 			.addClass('NUI-Widget NUI-Button')
 			.text(Property.Label)
@@ -95,12 +187,12 @@ NUI.Button = function(opt) {
 	};
 	
 	if(Property.OnClick) {
-		Struct.Container
+		Struct.Root
 		.on('click',Property.OnClick);
 	}
 	
 	if(Property.Class) {
-		Struct.Container
+		Struct.Root
 		.addClass(Property.Class);
 	}
 
@@ -114,7 +206,7 @@ NUI.Button = function(opt) {
 	get this for interacting with the widget via jQuery.
 	//*/
 
-		return Struct.Container;
+		return Struct.Root;
 	};
 	
 	this.Show = function() {
@@ -123,7 +215,7 @@ NUI.Button = function(opt) {
 	tell the widget to show itself.
 	//*/
 
-		Struct.Container.Show();
+		Struct.Root.Show();
 		return this;
 	};
 
@@ -134,7 +226,7 @@ NUI.Button = function(opt) {
 	tell the widget to hide itself.
 	//*/
 
-		Struct.Container.hide();
+		Struct.Root.hide();
 		return;
 	};
 	
@@ -160,6 +252,8 @@ NUI.Dialog = function(opt) {
 		Title: 'NUI Dialog',
 		Content: 'This is a dialog.',
 		Class: null,
+		Show: true,
+		Move: true,
 		OnAccept: null,
 		OnCancel: null,
 		Buttons: []
@@ -175,6 +269,7 @@ NUI.Dialog = function(opt) {
 			jQuery('<div />')
 			.addClass('NUI-Widget')
 			.addClass('NUI-Dialog')
+			.addClass(Property.Show?'NUI-Block':'NUI-Hidden')
 			.addClass(Property.Class)
 		),
 		TitleBar: (
@@ -199,6 +294,12 @@ NUI.Dialog = function(opt) {
 	.append(Struct.TitleBar)
 	.append(Struct.Content)
 	.append(Struct.ButtonBar);
+	
+	if(Property.Move) {
+		Struct.TitleBar
+		.on('mousedown',function(){ NUI.Move.Register(Struct.Root); })
+		.on('mouseup',function(){ NUI.Move.Unregister(Struct.Root); });	
+	}
 
 	////////////////
 	////////////////
@@ -287,6 +388,7 @@ NUI.Overlay = function(opt) {
 	var Property = {
 		Container: 'body',
 		Content: null,
+		Class: null,
 		Show: true
 	};
 
@@ -300,7 +402,8 @@ NUI.Overlay = function(opt) {
 			jQuery('<div />')
 			.addClass('NUI-Widget')
 			.addClass('NUI-Overlay')
-			.addClass((Property.Show===true)?('NUI-Block'):('NUI-Hidden'))
+			.addClass(Property.Show===true?'NUI-Block':'NUI-Hidden')
+			.addClass(Property.Class)
 		)
 	};
 
@@ -313,7 +416,7 @@ NUI.Overlay = function(opt) {
 
 	////////////////
 	////////////////
-
+	
 	this.Get = function() {
 	/*//
 	@return jQuery(<div>)

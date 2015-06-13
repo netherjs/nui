@@ -11,6 +11,8 @@ NUI.Dialog = function(opt) {
 		Title: 'NUI Dialog',
 		Content: 'This is a dialog.',
 		Class: null,
+		Show: true,
+		Move: true,
 		OnAccept: null,
 		OnCancel: null,
 		Buttons: []
@@ -26,6 +28,7 @@ NUI.Dialog = function(opt) {
 			jQuery('<div />')
 			.addClass('NUI-Widget')
 			.addClass('NUI-Dialog')
+			.addClass(Property.Show?'NUI-Block':'NUI-Hidden')
 			.addClass(Property.Class)
 		),
 		TitleBar: (
@@ -50,6 +53,12 @@ NUI.Dialog = function(opt) {
 	.append(Struct.TitleBar)
 	.append(Struct.Content)
 	.append(Struct.ButtonBar);
+	
+	if(Property.Move) {
+		Struct.TitleBar
+		.on('mousedown',function(){ NUI.Move.Register(Struct.Root); })
+		.on('mouseup',function(){ NUI.Move.Unregister(Struct.Root); });	
+	}
 
 	////////////////
 	////////////////

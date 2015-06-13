@@ -16,7 +16,7 @@ NUI.Button = function(opt) {
 	////////////////
 	
 	var Struct = {
-		Container: (
+		Root: (
 			jQuery('<button />')
 			.addClass('NUI-Widget NUI-Button')
 			.text(Property.Label)
@@ -24,12 +24,12 @@ NUI.Button = function(opt) {
 	};
 	
 	if(Property.OnClick) {
-		Struct.Container
+		Struct.Root
 		.on('click',Property.OnClick);
 	}
 	
 	if(Property.Class) {
-		Struct.Container
+		Struct.Root
 		.addClass(Property.Class);
 	}
 
@@ -43,7 +43,7 @@ NUI.Button = function(opt) {
 	get this for interacting with the widget via jQuery.
 	//*/
 
-		return Struct.Container;
+		return Struct.Root;
 	};
 	
 	this.Show = function() {
@@ -52,7 +52,7 @@ NUI.Button = function(opt) {
 	tell the widget to show itself.
 	//*/
 
-		Struct.Container.Show();
+		Struct.Root.Show();
 		return this;
 	};
 
@@ -63,7 +63,7 @@ NUI.Button = function(opt) {
 	tell the widget to hide itself.
 	//*/
 
-		Struct.Container.hide();
+		Struct.Root.hide();
 		return;
 	};
 	

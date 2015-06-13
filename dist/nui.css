@@ -17,6 +17,7 @@
 .NUI-Block { display:block; }
 .NUI-Center { text-align:center; }
 .NUI-Hidden { display:none; }
+.NUI-NoSelect { -moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none;-o-user-select:none; }
 
 /*/////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////*/
@@ -49,6 +50,7 @@
 
 .NUI-Dialog header {
 	background:#fff;
+	cursor:move;
 	font-weight:bold;
 	padding:10px;
 }
