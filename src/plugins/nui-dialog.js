@@ -15,7 +15,9 @@ NUI.Dialog = function(opt) {
 		Moveable: true,
 		OnAccept: null,
 		OnCancel: null,
-		Buttons: []
+		Buttons: [],
+		Height: 'auto',
+		Width: 'auto'
 	};
 	
 	NUI.Util.MergeProperties(opt,Property);
@@ -28,8 +30,9 @@ NUI.Dialog = function(opt) {
 			jQuery('<div />')
 			.addClass('NUI-Widget')
 			.addClass('NUI-Dialog')
-			.addClass(Property.Show?'NUI-Block':'NUI-Hidden')
+			.addClass(Property.Show===true?'NUI-Block':'NUI-Hidden')
 			.addClass(Property.Class)
+			.css({ 'height':Property.Height,'width':Property.Width })
 		),
 		TitleBar: (
 			jQuery('<header />')
@@ -58,6 +61,7 @@ NUI.Dialog = function(opt) {
 	
 	// apply settings.
 	if(Property.Moveable) Struct.TitleBar
+	.addClass('NUI-Moveable')
 	.on('mousedown',function(){ NUI.Move.Register(Struct.Root); })
 	.on('mouseup',function(){ NUI.Move.Unregister(Struct.Root); });	
 	
