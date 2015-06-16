@@ -26,6 +26,33 @@ NUI.Util = {
 		return;
 	},
 	
+	GetProperty:
+	function(request,source) {
+	/*//
+	@argv string Property, object Source
+	request a specific property from an object. this function is designed
+	to work with generic private properites from objects.
+	//*/
+	
+		if(source.hasOwnProperty(request)) return source[request];
+		else return false;		
+	},
+	
+	GetStructProperty:
+	function(request,source) {
+	/*//
+	@argv string Property, object Source
+	request a specific property from an object. this function is designed to
+	work with the Struct private properites in the UI classes - if no request
+	is specified then it automatically returns the Root property which should
+	exist in all NUI elements i didn't stuff up consistancy. this method is
+	to make writing the Get methods easy.
+	//*/
+	
+		if(request) return NUI.Util.GetProperty(request,source);
+		else return source.Root;
+	},
+	
 	CenterInParent:
 	function(child,parent) {
 	/*//

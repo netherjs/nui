@@ -54,14 +54,14 @@ NUI.Overlay = function(opt) {
 	////////////////
 	////////////////
 	
-	this.Get = function() {
+	this.Get = function(prop) {
 	/*//
-	@return jQuery(<div>)
-	return the main container object that makes up this widget. you would
-	get this for interacting with the widget via jQuery.
+	@return jQuery(*)
+	return the specified structure from the private Struct property. if
+	nothing is specified then you will be handed Struct.Root by default.
 	//*/
-
-		return Struct.Root;
+	
+		return NUI.Util.GetStructProperty(prop,Struct);
 	};
 
 	this.Hide = function() {

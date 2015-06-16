@@ -15,7 +15,7 @@
 }
 
 .NUI-Block { display:block; }
-.NUI-Center { text-align:center; }
+.NUI-Center { margin-left:auto; margin-right:auto; text-align:center; }
 .NUI-Hidden { display:none; }
 .NUI-Moveable { cursor:move; }
 .NUI-NoSelect { -moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none;-o-user-select:none; }

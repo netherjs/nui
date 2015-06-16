@@ -15,6 +15,7 @@ NUI.Dialog = function(opt) {
 		Moveable: true,
 		OnAccept: null,
 		OnCancel: null,
+		OnShow: null,
 		Buttons: [],
 		Height: 'auto',
 		Width: 'auto'
@@ -103,18 +104,45 @@ NUI.Dialog = function(opt) {
 	
 	Struct.Root.find('.NUI-Dialog-Cancel')
 	.click(this.Cancel);
-	
-	////////////////
-	////////////////
-	
-	this.Get = function() {
-	/*//
-	@return jQuery(<div>)
-	return the main container object that makes up this widget. you would
-	get this for interacting with the widget via jQuery.
-	//*/
 
-		return Struct.Root;	
+	////////////////
+	////////////////
+	
+	this.SetLoading = function(state) {
+	/*//
+	@argv bool IsThinking
+	@return self
+	a convenience method. it will hide any buttons in the footer and show any
+	images in there. allows you to do something like throw a hidden NUI.Image
+	in the buttons array to quickly toggle a "please wait" style display while
+	the OnAccept waits on async stuff (or whatever you wish). this does assume
+	however that you ONLY add NUI.Button or NUI.Image to the button bar of the
+	dialog. if you do not add a hidden NUI.Image, it will appear to have no
+	effect other than hiding any buttons in there. 
+	//*/
+	
+		if(state) {
+			Struct.ButtonBar.find('button').hide();
+			Struct.ButtonBar.find('img').show();
+		} else {
+			Struct.ButtonBar.find('img').hide();
+			Struct.ButtonBar.find('button').show();
+		}
+		
+		return this;
+	};
+	
+	////////////////
+	////////////////
+	
+	this.Get = function(prop) {
+	/*//
+	@return jQuery(*)
+	return the specified structure from the private Struct property. if
+	nothing is specified then you will be handed Struct.Root by default.
+	//*/
+	
+		return NUI.Util.GetStructProperty(prop,Struct);
 	};
 	
 	this.Show = function() {
