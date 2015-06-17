@@ -12,7 +12,9 @@ NUI.Dialog = function(opt) {
 		Content: 'This is a dialog.',
 		Class: null,
 		Show: true,
+		Fixed: true,
 		Moveable: true,
+		Position: null,
 		OnAccept: null,
 		OnCancel: null,
 		OnShow: null,
@@ -32,6 +34,7 @@ NUI.Dialog = function(opt) {
 			.addClass('NUI-Widget')
 			.addClass('NUI-Dialog')
 			.addClass(Property.Show===true?'NUI-Block':'NUI-Hidden')
+			.addClass(Property.Fixed===true?'NUI-PositionFixed':'NUI-PositionAbsolute')
 			.addClass(Property.Class)
 			.css({ 'height':Property.Height,'width':Property.Width })
 		),
@@ -61,14 +64,28 @@ NUI.Dialog = function(opt) {
 	.append(Struct.ButtonBar);
 	
 	// apply settings.
-	if(Property.Moveable) Struct.TitleBar
-	.addClass('NUI-Moveable')
-	.on('mousedown',function(){ NUI.Move.Register(Struct.Root); })
-	.on('mouseup',function(){ NUI.Move.Unregister(Struct.Root); });	
+	if(Property.Moveable) {
+		Struct.TitleBar
+		.addClass('NUI-Moveable')
+		.on('mousedown',function(){ NUI.Move.Register(Struct.Root); })
+		.on('mouseup',function(){ NUI.Move.Unregister(Struct.Root); });
+	}	
 	
-	// add the elmeent into the dom.
-	if(Property.Container)
-	jQuery(Property.Container).append(Struct.Root);
+	// add the element into the dom.
+	if(Property.Container) {
+		jQuery(Property.Container)
+		.append(Struct.Root);	
+	}
+	
+	if(Property.Position) {
+		Struct.Root
+		.css({
+			'top': Property.Position[1],
+			'left': Property.Position[0]
+		});
+	} else {
+		NUI.Util.CenterInParent(Struct.Root);
+	}
 
 	////////////////
 	////////////////
@@ -163,6 +180,17 @@ NUI.Dialog = function(opt) {
 
 		Struct.Root.hide();
 		return;
+	};
+	
+	this.Destroy = function() {
+	/*//
+	@return self
+	hide and remove the widget from the dom. use when done with it.
+	//*/
+
+		this.Hide();
+		Struct.Root.remove();
+		return this;
 	};
 
 };

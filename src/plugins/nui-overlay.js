@@ -5,13 +5,16 @@ put things inside of it that demand attention.
 /////////////////////////////////////////////////////////////////////////////*/
 
 NUI.Overlay = function(opt) {
+	var that = this;
 
 	var Property = {
 		Container: 'body',
 		Content: null,
 		Class: null,
 		Show: true,
-		HandleResize: true
+		HandleResize: true,
+		OnClick: null,
+		OnClose: null
 	};
 
 	NUI.Util.MergeProperties(opt,Property);
@@ -50,6 +53,20 @@ NUI.Overlay = function(opt) {
 
 	// center the child.
 	NUI.Util.CenterInParent(Property.Content.valueOf());
+
+	////////////////
+	////////////////
+	
+	this.Close = function() {
+		if(Property.OnClose) Property.OnClose();
+		else that.Destroy();
+		
+		return that;
+	};
+	
+	jQuery(Struct.Root)
+	.find('.NUI-Overlay-Close')
+	.on('click',this.Close);
 
 	////////////////
 	////////////////
@@ -94,7 +111,7 @@ NUI.Overlay = function(opt) {
 		this.Hide();
 		Struct.Root.remove();
 		return this;
-	}
+	};
 
 };
 

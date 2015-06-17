@@ -62,17 +62,47 @@ NUI.Util = {
 	and that they are CSS'd to allow positioning properly.
 	//*/
 	
-		if(!parent) parent = child.parent();
-	
 		var cxoff = child.outerWidth(true) / 2 ;
 		var cyoff = child.outerHeight(true) / 2;
+		var pxcen = 0;
+		var pycen = 0;
+		var pxoff = 0;
+		var pyoff = 0;
+
+		if(!parent) {
+			// if we didn't specify, find what the object is packed
+			// inside of.
+			parent = child.parent();
+		}
+
+		if(parent === window || parent[0] === jQuery('body')[0]) {
+			// if it turns out its the body or the viewport, lets
+			// use the viewport for math instead.
+			parent = jQuery(window);
+
+			if(child.css('position') === 'absolute') {
+				// if we are using the window, and the item wants
+				// to be positioned aboslute, add an offset so that
+				// no matter where scrolled, it shows up in the center
+				// of the viewport (rather than, the center of the
+				// entire length of the body which could be off the
+				// viewport completely).
+				
+				pyoff = jQuery(document).scrollTop();
+			}
+		}
 		
-		var pxcen = parent.width() / 2;
-		var pycen = parent.height() / 2;
+		if(parent !== window) {
+			pxcen = parent.width() / 2;
+			pycen = parent.height() / 2;
+		} else {
+			pxcen = jQuery(window).width() / 2;
+			pycen = jQuery(window).height() / 2;
+		}
 		
 		child.css({
-			'left': (pxcen - cxoff) + 'px',
-			'top': (pycen - cyoff) + 'px'
+			'left': ((pxcen - cxoff) + pxoff) + 'px',
+			'top': ((pycen - cyoff) + pyoff) + 'px'
 		});
 
 		return;

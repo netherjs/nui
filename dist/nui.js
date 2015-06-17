@@ -177,17 +177,47 @@ NUI.Util = {
 	and that they are CSS'd to allow positioning properly.
 	//*/
 	
-		if(!parent) parent = child.parent();
-	
 		var cxoff = child.outerWidth(true) / 2 ;
 		var cyoff = child.outerHeight(true) / 2;
+		var pxcen = 0;
+		var pycen = 0;
+		var pxoff = 0;
+		var pyoff = 0;
+
+		if(!parent) {
+			// if we didn't specify, find what the object is packed
+			// inside of.
+			parent = child.parent();
+		}
+
+		if(parent === window || parent[0] === jQuery('body')[0]) {
+			// if it turns out its the body or the viewport, lets
+			// use the viewport for math instead.
+			parent = jQuery(window);
+
+			if(child.css('position') === 'absolute') {
+				// if we are using the window, and the item wants
+				// to be positioned aboslute, add an offset so that
+				// no matter where scrolled, it shows up in the center
+				// of the viewport (rather than, the center of the
+				// entire length of the body which could be off the
+				// viewport completely).
+				
+				pyoff = jQuery(document).scrollTop();
+			}
+		}
 		
-		var pxcen = parent.width() / 2;
-		var pycen = parent.height() / 2;
+		if(parent !== window) {
+			pxcen = parent.width() / 2;
+			pycen = parent.height() / 2;
+		} else {
+			pxcen = jQuery(window).width() / 2;
+			pycen = jQuery(window).height() / 2;
+		}
 		
 		child.css({
-			'left': (pxcen - cxoff) + 'px',
-			'top': (pycen - cyoff) + 'px'
+			'left': ((pxcen - cxoff) + pxoff) + 'px',
+			'top': ((pycen - cyoff) + pyoff) + 'px'
 		});
 
 		return;
@@ -289,7 +319,9 @@ NUI.Dialog = function(opt) {
 		Content: 'This is a dialog.',
 		Class: null,
 		Show: true,
+		Fixed: true,
 		Moveable: true,
+		Position: null,
 		OnAccept: null,
 		OnCancel: null,
 		OnShow: null,
@@ -309,6 +341,7 @@ NUI.Dialog = function(opt) {
 			.addClass('NUI-Widget')
 			.addClass('NUI-Dialog')
 			.addClass(Property.Show===true?'NUI-Block':'NUI-Hidden')
+			.addClass(Property.Fixed===true?'NUI-PositionFixed':'NUI-PositionAbsolute')
 			.addClass(Property.Class)
 			.css({ 'height':Property.Height,'width':Property.Width })
 		),
@@ -338,14 +371,28 @@ NUI.Dialog = function(opt) {
 	.append(Struct.ButtonBar);
 	
 	// apply settings.
-	if(Property.Moveable) Struct.TitleBar
-	.addClass('NUI-Moveable')
-	.on('mousedown',function(){ NUI.Move.Register(Struct.Root); })
-	.on('mouseup',function(){ NUI.Move.Unregister(Struct.Root); });	
+	if(Property.Moveable) {
+		Struct.TitleBar
+		.addClass('NUI-Moveable')
+		.on('mousedown',function(){ NUI.Move.Register(Struct.Root); })
+		.on('mouseup',function(){ NUI.Move.Unregister(Struct.Root); });
+	}	
 	
-	// add the elmeent into the dom.
-	if(Property.Container)
-	jQuery(Property.Container).append(Struct.Root);
+	// add the element into the dom.
+	if(Property.Container) {
+		jQuery(Property.Container)
+		.append(Struct.Root);	
+	}
+	
+	if(Property.Position) {
+		Struct.Root
+		.css({
+			'top': Property.Position[1],
+			'left': Property.Position[0]
+		});
+	} else {
+		NUI.Util.CenterInParent(Struct.Root);
+	}
 
 	////////////////
 	////////////////
@@ -440,6 +487,17 @@ NUI.Dialog = function(opt) {
 
 		Struct.Root.hide();
 		return;
+	};
+	
+	this.Destroy = function() {
+	/*//
+	@return self
+	hide and remove the widget from the dom. use when done with it.
+	//*/
+
+		this.Hide();
+		Struct.Root.remove();
+		return this;
 	};
 
 };
@@ -539,13 +597,16 @@ put things inside of it that demand attention.
 /////////////////////////////////////////////////////////////////////////////*/
 
 NUI.Overlay = function(opt) {
+	var that = this;
 
 	var Property = {
 		Container: 'body',
 		Content: null,
 		Class: null,
 		Show: true,
-		HandleResize: true
+		HandleResize: true,
+		OnClick: null,
+		OnClose: null
 	};
 
 	NUI.Util.MergeProperties(opt,Property);
@@ -584,6 +645,20 @@ NUI.Overlay = function(opt) {
 
 	// center the child.
 	NUI.Util.CenterInParent(Property.Content.valueOf());
+
+	////////////////
+	////////////////
+	
+	this.Close = function() {
+		if(Property.OnClose) Property.OnClose();
+		else that.Destroy();
+		
+		return that;
+	};
+	
+	jQuery(Struct.Root)
+	.find('.NUI-Overlay-Close')
+	.on('click',this.Close);
 
 	////////////////
 	////////////////
@@ -628,7 +703,7 @@ NUI.Overlay = function(opt) {
 		this.Hide();
 		Struct.Root.remove();
 		return this;
-	}
+	};
 
 };
 
