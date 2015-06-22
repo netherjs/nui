@@ -9,7 +9,7 @@ var NUI = {
 	
 	GetVersion:
 	function() { return '1.0.0'; },
-
+	
 	Move: {
 	/*//
 	this subobject will hold the API for allowing for and moving any widgets

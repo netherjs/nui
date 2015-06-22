@@ -10,7 +10,7 @@ var NUI = {
 	
 	GetVersion:
 	function() { return '1.0.0'; },
-
+	
 	Move: {
 	/*//
 	this subobject will hold the API for allowing for and moving any widgets
@@ -226,6 +226,75 @@ NUI.Util = {
 };
 
 
+//// src/nui-traits.js ////////////////////////////////////////////////////////
+NUI.Traits = {
+
+	GetFromStruct:
+	function(what) {
+	/*//
+	@argv string StructPropertyName default "Root"
+	@return jQuery | false
+	fetch the requested thing from the struct property. if what was
+	requested was not found false will be returned. if nothing was
+	specified then the root of the element will be returned.
+	//*/
+	
+		if(what && this.Struct.hasOwnProperty(what)) return this.Struct[what];
+		else if(what) return false;
+		else return this.Struct.Root;			
+	},
+	
+	DestroyFromStruct:
+	function(what) {
+	/*//
+	@argv string StructPropertyName default "Root"
+	@return self
+	hide and remove this widget from the DOM. it'll be useless after this.
+	//*/
+
+		var el;
+		
+		if(el = this.Get(what))
+		el.hide().remove();			
+		
+		return this;	
+	},
+	
+	HideFromStruct:
+	function(what) {
+	/*//
+	@argv string StructPropertyName default "Root"
+	@return self
+	hide this widget.
+	//*/
+	
+		var el;
+		
+		if(el = this.Get(what))
+		el.hide();
+		
+		return this;
+	},
+	
+	ShowFromStruct:
+	function(what) {
+	/*//
+	@argv string StructPropertyName default "Root"
+	@return self
+	show this widget.
+	//*/
+	
+		var el;
+		
+		if(el = this.Get(what))
+		el.show();
+		
+		return this;
+	}
+
+};
+
+
 //// plugins/nui-button.js ////////////////////////////////////////////////////
 /*// NUI.Button ///////////////////////////////////////////////////////////////
 This provides a button widget that can do stuff when clicked. Amazing.
@@ -312,10 +381,15 @@ do with this is to shove it into a NUI.Overlay.
 /////////////////////////////////////////////////////////////////////////////*/
 
 NUI.Dialog = function(opt) {
+	var that = this;
+
+	////////////////////////
+	////////////////////////
 	
 	var Property = {
 		Container: 'body',
 		Title: 'NUI Dialog',
+		CancelLabel: '&times;',
 		Content: 'This is a dialog.',
 		Class: null,
 		Show: true,
@@ -332,10 +406,10 @@ NUI.Dialog = function(opt) {
 	
 	NUI.Util.MergeProperties(opt,Property);
 	
-	////////////////
-	////////////////
+	////////////////////////
+	////////////////////////
 	
-	var Struct = {
+	this.Struct = {
 		Root: (
 			jQuery('<div />')
 			.addClass('NUI-Widget')
@@ -347,7 +421,16 @@ NUI.Dialog = function(opt) {
 		),
 		TitleBar: (
 			jQuery('<header />')
-			.text(Property.Title)
+			.append(
+				jQuery('<button />')
+				.html(Property.CancelLabel)
+				.on('mousedown',function(e){ return false; })
+				.on('click',function(e){ that.Cancel(); return false; })
+			)
+			.append(
+				jQuery('<span />')
+				.text(Property.Title)
+			)
 		),
 		Content: (
 			jQuery('<section />')
@@ -358,44 +441,48 @@ NUI.Dialog = function(opt) {
 		)
 	};
 
+	////////////////////////
+	////////////////////////
+
+	// compile the dialog.
+	this.Struct.Root
+	.append(this.Struct.TitleBar)
+	.append(this.Struct.Content)
+	.append(this.Struct.ButtonBar);
+
 	// compile the button bar.
 	jQuery.each(Property.Buttons,function(){
-		Struct.ButtonBar
+		that.Struct.ButtonBar
 		.append(this.valueOf());
 	});
-	
-	// compile the dialog.
-	Struct.Root
-	.append(Struct.TitleBar)
-	.append(Struct.Content)
-	.append(Struct.ButtonBar);
-	
-	// apply settings.
+
+	// make the dialog moveable.
 	if(Property.Moveable) {
-		Struct.TitleBar
+		this.Struct.TitleBar
 		.addClass('NUI-Moveable')
-		.on('mousedown',function(){ NUI.Move.Register(Struct.Root); })
-		.on('mouseup',function(){ NUI.Move.Unregister(Struct.Root); });
+		.on('mousedown',function(){ NUI.Move.Register(that.Struct.Root); })
+		.on('mouseup',function(){ NUI.Move.Unregister(that.Struct.Root); });
 	}	
 	
-	// add the element into the dom.
+	// add dialog to the page.
 	if(Property.Container) {
 		jQuery(Property.Container)
-		.append(Struct.Root);	
+		.append(this.Struct.Root);	
 	}
-	
+
+	// position the dialog.
 	if(Property.Position) {
-		Struct.Root
+		this.Struct.Root
 		.css({
 			'top': Property.Position[1],
 			'left': Property.Position[0]
 		});
 	} else {
-		NUI.Util.CenterInParent(Struct.Root);
+		NUI.Util.CenterInParent(this.Struct.Root);
 	}
 
-	////////////////
-	////////////////
+	////////////////////////
+	////////////////////////
 	
 	this.Accept = function() {
 	/*//
@@ -404,8 +491,8 @@ NUI.Dialog = function(opt) {
 	and to execute the OnAccept action if any.
 	//*/
 		
-		if(Property.OnAccept)
-		Property.OnAccept();
+		if(Property.OnAccept) Property.OnAccept();
+		else this.Destroy();
 		
 		return this;
 	};
@@ -417,20 +504,22 @@ NUI.Dialog = function(opt) {
 	and to execute the OnCancel action if any.
 	//*/
 		
-		if(Property.OnCancel)
-		Property.OnCancel();
+		if(Property.OnCancel) Property.OnCancel();
+		else this.Destroy();
 
 		return this;
 	};
 	
-	Struct.Root.find('.NUI-Dialog-Accept')
+	this.Struct.Root
+	.find('.NUI-Dialog-Accept')
 	.click(this.Accept);
 	
-	Struct.Root.find('.NUI-Dialog-Cancel')
+	this.Struct.Root
+	.find('.NUI-Dialog-Cancel')
 	.click(this.Cancel);
 
-	////////////////
-	////////////////
+	////////////////////////
+	////////////////////////
 	
 	this.SetLoading = function(state) {
 	/*//
@@ -446,11 +535,17 @@ NUI.Dialog = function(opt) {
 	//*/
 	
 		if(state) {
-			Struct.ButtonBar.find('button').hide();
-			Struct.ButtonBar.find('img').show();
+			this.Struct.ButtonBar
+			.find('button').hide();
+	
+			this.Struct.ButtonBar
+			.find('img').show();
 		} else {
-			Struct.ButtonBar.find('img').hide();
-			Struct.ButtonBar.find('button').show();
+			this.Struct.ButtonBar
+			.find('img').hide();
+			
+			this.Struct.ButtonBar
+			.find('button').show();
 		}
 		
 		return this;
@@ -459,47 +554,11 @@ NUI.Dialog = function(opt) {
 	////////////////
 	////////////////
 	
-	this.Get = function(prop) {
-	/*//
-	@return jQuery(*)
-	return the specified structure from the private Struct property. if
-	nothing is specified then you will be handed Struct.Root by default.
-	//*/
+	this.Get = NUI.Traits.GetFromStruct;
+	this.Show = NUI.Traits.ShowFromStruct;
+	this.Hide = NUI.Traits.HideFromStruct;		
+	this.Destroy = NUI.Traits.DestroyFromStruct;
 	
-		return NUI.Util.GetStructProperty(prop,Struct);
-	};
-	
-	this.Show = function() {
-	/*//
-	@return self
-	tell the widget to show itself.
-	//*/
-
-		Struct.Root.show();
-		return;
-	};
-
-	this.Hide = function() {
-	/*//
-	@return self
-	tell the widget to hide itself.
-	//*/
-
-		Struct.Root.hide();
-		return;
-	};
-	
-	this.Destroy = function() {
-	/*//
-	@return self
-	hide and remove the widget from the dom. use when done with it.
-	//*/
-
-		this.Hide();
-		Struct.Root.remove();
-		return this;
-	};
-
 };
 
 NUI.Dialog.prototype.valueOf = function() {

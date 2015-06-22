@@ -4,6 +4,12 @@ define('NUIROOT',dirname(dirname(__FILE__)));
 $filelist = glob(sprintf('%s/src/plugins/*.js',NUIROOT));
 sort($filelist);
 
+// prepend our traits.
+array_unshift($filelist,sprintf(
+	'%s/src/nui-traits.js',
+	NUIROOT
+));
+
 // prepend our utility stuff.
 array_unshift($filelist,sprintf(
 	'%s/src/nui-util.js',

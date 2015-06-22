@@ -59,7 +59,27 @@
 .NUI-Dialog header {
 	background:#fff;
 	font-weight:bold;
+	height:auto;
 	padding:10px;
+}
+
+.NUI-Dialog header button {
+	background:#eee;
+	border:0px solid #ccc;
+	border-top-right-radius:8px;
+	color:#aaa;
+	cursor:pointer;
+	height:100%;
+	float:right;
+	padding-left:16px;
+	padding-right:16px;
+	text-align:center;
+	vertical-align:center;
+}
+
+.NUI-Dialog header button:hover {
+	background:#C43634;
+	color:#E5A09F;
 }
 
 .NUI-Dialog section {
