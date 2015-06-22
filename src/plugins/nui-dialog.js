@@ -178,13 +178,10 @@ NUI.Dialog = function(opt) {
 	////////////////
 	////////////////
 	
+	this.Destroy = NUI.Traits.DestroyFromStruct;
 	this.Get = NUI.Traits.GetFromStruct;
 	this.Show = NUI.Traits.ShowFromStruct;
 	this.Hide = NUI.Traits.HideFromStruct;		
-	this.Destroy = NUI.Traits.DestroyFromStruct;
-	
 };
 
-NUI.Dialog.prototype.valueOf = function() {
-	return this.Get();
-};
+NUI.Dialog.prototype.valueOf = NUI.Traits.GetFromStruct;

@@ -310,10 +310,10 @@ NUI.Button = function(opt) {
 
 	NUI.Util.MergeProperties(opt,Property);
 	
-	////////////////
-	////////////////
+	////////////////////////
+	////////////////////////
 	
-	var Struct = {
+	this.Struct = {
 		Root: (
 			jQuery('<button />')
 			.addClass('NUI-Widget NUI-Button')
@@ -322,56 +322,25 @@ NUI.Button = function(opt) {
 	};
 	
 	if(Property.OnClick) {
-		Struct.Root
+		this.Struct.Root
 		.on('click',Property.OnClick);
 	}
 	
 	if(Property.Class) {
-		Struct.Root
+		this.Struct.Root
 		.addClass(Property.Class);
 	}
 
-	////////////////
-	////////////////
+	////////////////////////
+	////////////////////////
 	
-	this.Get = function(prop) {
-	/*//
-	@return jQuery(*)
-	return the specified structure from the private Struct property. if
-	nothing is specified then you will be handed Struct.Root by default.
-	//*/
-	
-		return NUI.Util.GetStructProperty(prop,Struct);
-	};
-	
-	this.Show = function() {
-	/*//
-	@return self
-	tell the widget to show itself.
-	//*/
-
-		Struct.Root.Show();
-		return this;
-	};
-
-
-	this.Hide = function() {
-	/*//
-	@return self
-	tell the widget to hide itself.
-	//*/
-
-		Struct.Root.hide();
-		return;
-	};
-	
-	return;
+	this.Destroy = NUI.Traits.DestroyFromStruct;
+	this.Get = NUI.Traits.GetFromStruct;
+	this.Hide = NUI.Traits.HideFromStruct;
+	this.Show = NUI.Traits.ShowFromStruct;
 };
 
-NUI.Button.prototype.valueOf = function() {
-	return this.Get();
-}
-
+NUI.Button.prototype.valueOf = NUI.Traits.GetFromStruct;
 
 //// plugins/nui-dialog.js ////////////////////////////////////////////////////
 /*// NUI.Dialog ///////////////////////////////////////////////////////////////
@@ -554,16 +523,13 @@ NUI.Dialog = function(opt) {
 	////////////////
 	////////////////
 	
+	this.Destroy = NUI.Traits.DestroyFromStruct;
 	this.Get = NUI.Traits.GetFromStruct;
 	this.Show = NUI.Traits.ShowFromStruct;
 	this.Hide = NUI.Traits.HideFromStruct;		
-	this.Destroy = NUI.Traits.DestroyFromStruct;
-	
 };
 
-NUI.Dialog.prototype.valueOf = function() {
-	return this.Get();
-};
+NUI.Dialog.prototype.valueOf = NUI.Traits.GetFromStruct;
 
 
 //// plugins/nui-image.js /////////////////////////////////////////////////////
@@ -582,10 +548,10 @@ NUI.Image = function(opt) {
 	
 	NUI.Util.MergeProperties(opt,Property);
 	
-	////////////////
-	////////////////
+	////////////////////////
+	////////////////////////
 	
-	var Struct = {
+	this.Struct = {
 		Root: (
 			jQuery('<img />')
 			.attr('src',Property.URL)
@@ -594,58 +560,21 @@ NUI.Image = function(opt) {
 		)
 	};
 	
-	if(Property.Container)
-	jQuery(container).append(Struct.Root);
-
-	////////////////
-	////////////////
-
-	this.Get = function(prop) {
-	/*//
-	@return jQuery(*)
-	return the specified structure from the private Struct property. if
-	nothing is specified then you will be handed Struct.Root by default.
-	//*/
-	
-		return NUI.Util.GetStructProperty(prop,Struct);
-	};
-
-	this.Hide = function() {
-	/*//
-	@return self
-	hide the widget.
-	//*/
-
-		Struct.Root.hide();
-		return this;
-	};
-
-	this.Show = function() {
-	/*//
-	@return self
-	show the widget.
-	//*/
-
-		Struct.Root.show();
-		return this;
-	};
-
-	this.Destroy = function() {
-	/*//
-	@return self
-	hide and remove the widget from the dom. use when done with it.
-	//*/
-
-		this.Hide();
-		Struct.Root.remove();
-		return this;
+	if(Property.Container) {
+		jQuery(Property.Container)
+		.append(this.Struct.Root);
 	}
 
+	////////////////////////
+	////////////////////////
+
+	this.Destroy = NUI.Traits.DestroyFromStruct;
+	this.Get = NUI.Traits.GetFromStruct;
+	this.Hide = NUI.Traits.HideFromStruct;
+	this.Show = NUI.Traits.ShowFromStruct;
 };
 
-NUI.Image.prototype.valueOf = function() {
-	return this.Get();
-};
+NUI.Image.prototype.valueOf = NUI.Traits.GetFromStruct;
 
 
 //// plugins/nui-overlay.js ///////////////////////////////////////////////////
@@ -670,10 +599,10 @@ NUI.Overlay = function(opt) {
 
 	NUI.Util.MergeProperties(opt,Property);
 
-	////////////////
-	////////////////
+	////////////////////////
+	////////////////////////
 
-	var Struct = {
+	this.Struct = {
 		Root: (
 			jQuery('<div />')
 			.addClass('NUI-Widget')
@@ -684,29 +613,34 @@ NUI.Overlay = function(opt) {
 	};
 
 	// compile the element.
-	Struct.Root
+	this.Struct.Root
 	.append(Property.Content.valueOf());
 	
 	// allow repositioning when window size changes.
-	if(Property.HandleResize) jQuery(window)
-	.on('resize',function(){
-		var element = Property.Content.valueOf();
-		
-		if(!element.attr('nui-moved'))
-		NUI.Util.CenterInParent(Property.Content.valueOf());
-		
-		return;
-	});
+	if(Property.HandleResize) {
+		jQuery(window).on('resize',function(){
+			var element = Property.Content.valueOf();
+			
+			if(!element.attr('nui-moved'))
+			NUI.Util.CenterInParent(Property.Content.valueOf());
+			
+			return;
+		});
+	}
 	
 	// add the elmeent into the dom.
-	if(Property.Container) jQuery(Property.Container)
-	.append(Struct.Root);
+	if(Property.Container) {
+		jQuery(Property.Container)
+		.append(this.Struct.Root);
+	}
 
 	// center the child.
-	NUI.Util.CenterInParent(Property.Content.valueOf());
+	if(Property.Content) {
+		NUI.Util.CenterInParent(Property.Content.valueOf());
+	}
 
-	////////////////
-	////////////////
+	////////////////////////
+	////////////////////////
 	
 	this.Close = function() {
 		if(Property.OnClose) Property.OnClose();
@@ -715,60 +649,20 @@ NUI.Overlay = function(opt) {
 		return that;
 	};
 	
-	jQuery(Struct.Root)
+	jQuery(this.Struct.Root)
 	.find('.NUI-Overlay-Close')
 	.on('click',this.Close);
 
-	////////////////
-	////////////////
+	////////////////////////
+	////////////////////////
 	
-	this.Get = function(prop) {
-	/*//
-	@return jQuery(*)
-	return the specified structure from the private Struct property. if
-	nothing is specified then you will be handed Struct.Root by default.
-	//*/
-	
-		return NUI.Util.GetStructProperty(prop,Struct);
-	};
-
-	this.Hide = function() {
-	/*//
-	@return self
-	tell the overlay to go away for now.
-	//*/
-
-		Struct.Root.hide();
-		return this;
-	};
-
-	this.Show = function() {
-	/*//
-	@return self
-	tell the overlay to come back. also centers whatever is inside it.
-	//*/
-
-		Struct.Root.show();
-		NUI.Util.CenterInParent(Property.Content.valueOf());
-		return this;
-	};
-
-	this.Destroy = function() {
-	/*//
-	@return self
-	hide and remove the widget from the dom. use when done with it.
-	//*/
-
-		this.Hide();
-		Struct.Root.remove();
-		return this;
-	};
-
+	this.Destroy = NUI.Traits.DestroyFromStruct;
+	this.Get = NUI.Traits.GetFromStruct;
+	this.Hide = NUI.Traits.HideFromStruct;
+	this.Show = NUI.Traits.ShowFromStruct;
 };
 
-NUI.Overlay.prototype.valueOf = function() {
-	return this.Get();
-};
+NUI.Overlay.prototype.valueOf = NUI.Traits.GetFromStruct;
 
 
 

@@ -13,10 +13,10 @@ NUI.Image = function(opt) {
 	
 	NUI.Util.MergeProperties(opt,Property);
 	
-	////////////////
-	////////////////
+	////////////////////////
+	////////////////////////
 	
-	var Struct = {
+	this.Struct = {
 		Root: (
 			jQuery('<img />')
 			.attr('src',Property.URL)
@@ -25,55 +25,18 @@ NUI.Image = function(opt) {
 		)
 	};
 	
-	if(Property.Container)
-	jQuery(container).append(Struct.Root);
-
-	////////////////
-	////////////////
-
-	this.Get = function(prop) {
-	/*//
-	@return jQuery(*)
-	return the specified structure from the private Struct property. if
-	nothing is specified then you will be handed Struct.Root by default.
-	//*/
-	
-		return NUI.Util.GetStructProperty(prop,Struct);
-	};
-
-	this.Hide = function() {
-	/*//
-	@return self
-	hide the widget.
-	//*/
-
-		Struct.Root.hide();
-		return this;
-	};
-
-	this.Show = function() {
-	/*//
-	@return self
-	show the widget.
-	//*/
-
-		Struct.Root.show();
-		return this;
-	};
-
-	this.Destroy = function() {
-	/*//
-	@return self
-	hide and remove the widget from the dom. use when done with it.
-	//*/
-
-		this.Hide();
-		Struct.Root.remove();
-		return this;
+	if(Property.Container) {
+		jQuery(Property.Container)
+		.append(this.Struct.Root);
 	}
 
+	////////////////////////
+	////////////////////////
+
+	this.Destroy = NUI.Traits.DestroyFromStruct;
+	this.Get = NUI.Traits.GetFromStruct;
+	this.Hide = NUI.Traits.HideFromStruct;
+	this.Show = NUI.Traits.ShowFromStruct;
 };
 
-NUI.Image.prototype.valueOf = function() {
-	return this.Get();
-};
+NUI.Image.prototype.valueOf = NUI.Traits.GetFromStruct;

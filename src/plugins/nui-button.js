@@ -12,10 +12,10 @@ NUI.Button = function(opt) {
 
 	NUI.Util.MergeProperties(opt,Property);
 	
-	////////////////
-	////////////////
+	////////////////////////
+	////////////////////////
 	
-	var Struct = {
+	this.Struct = {
 		Root: (
 			jQuery('<button />')
 			.addClass('NUI-Widget NUI-Button')
@@ -24,52 +24,22 @@ NUI.Button = function(opt) {
 	};
 	
 	if(Property.OnClick) {
-		Struct.Root
+		this.Struct.Root
 		.on('click',Property.OnClick);
 	}
 	
 	if(Property.Class) {
-		Struct.Root
+		this.Struct.Root
 		.addClass(Property.Class);
 	}
 
-	////////////////
-	////////////////
+	////////////////////////
+	////////////////////////
 	
-	this.Get = function(prop) {
-	/*//
-	@return jQuery(*)
-	return the specified structure from the private Struct property. if
-	nothing is specified then you will be handed Struct.Root by default.
-	//*/
-	
-		return NUI.Util.GetStructProperty(prop,Struct);
-	};
-	
-	this.Show = function() {
-	/*//
-	@return self
-	tell the widget to show itself.
-	//*/
-
-		Struct.Root.Show();
-		return this;
-	};
-
-
-	this.Hide = function() {
-	/*//
-	@return self
-	tell the widget to hide itself.
-	//*/
-
-		Struct.Root.hide();
-		return;
-	};
-	
-	return;
+	this.Destroy = NUI.Traits.DestroyFromStruct;
+	this.Get = NUI.Traits.GetFromStruct;
+	this.Hide = NUI.Traits.HideFromStruct;
+	this.Show = NUI.Traits.ShowFromStruct;
 };
 
-NUI.Button.prototype.valueOf = function() {
-	return this.Get();
-}
+NUI.Button.prototype.valueOf = NUI.Traits.GetFromStruct;
