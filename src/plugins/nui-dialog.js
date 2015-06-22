@@ -25,7 +25,8 @@ NUI.Dialog = function(opt) {
 		OnShow: null,
 		Buttons: [],
 		Height: 'auto',
-		Width: 'auto'
+		Width: 'auto',
+		IsLoading: false
 	};
 	
 	NUI.Util.MergeProperties(opt,Property);
@@ -114,6 +115,8 @@ NUI.Dialog = function(opt) {
 	tell the widget that the user has accepted whatever the dialog was about
 	and to execute the OnAccept action if any.
 	//*/
+	
+		if(Property.IsLoading) return;
 		
 		if(Property.OnAccept) Property.OnAccept();
 		else this.Destroy();
@@ -127,6 +130,8 @@ NUI.Dialog = function(opt) {
 	tell the widget that the user has canceled whatever the dialog was about
 	and to execute the OnCancel action if any.
 	//*/
+	
+		if(Property.IsLoading) return;
 		
 		if(Property.OnCancel) Property.OnCancel();
 		else this.Destroy();
@@ -157,6 +162,8 @@ NUI.Dialog = function(opt) {
 	dialog. if you do not add a hidden NUI.Image, it will appear to have no
 	effect other than hiding any buttons in there. 
 	//*/
+
+		Property.IsLoading = state;
 	
 		if(state) {
 			this.Struct.ButtonBar
