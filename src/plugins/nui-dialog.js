@@ -26,7 +26,7 @@ NUI.Dialog = function(opt) {
 		Buttons: [],
 		Height: 'auto',
 		Width: 'auto',
-		IsLoading: false
+		IsBusy: false
 	};
 	
 	NUI.Util.MergeProperties(opt,Property);
@@ -116,7 +116,7 @@ NUI.Dialog = function(opt) {
 	and to execute the OnAccept action if any.
 	//*/
 	
-		if(Property.IsLoading) return;
+		if(Property.IsBusy) return;
 		
 		if(Property.OnAccept) Property.OnAccept();
 		else this.Destroy();
@@ -131,7 +131,7 @@ NUI.Dialog = function(opt) {
 	and to execute the OnCancel action if any.
 	//*/
 	
-		if(Property.IsLoading) return;
+		if(Property.IsBusy) return;
 		
 		if(Property.OnCancel) Property.OnCancel();
 		else this.Destroy();
@@ -150,7 +150,7 @@ NUI.Dialog = function(opt) {
 	////////////////////////
 	////////////////////////
 	
-	this.SetLoading = function(state) {
+	this.SetBusy = function(state) {
 	/*//
 	@argv bool IsThinking
 	@return self
@@ -163,7 +163,7 @@ NUI.Dialog = function(opt) {
 	effect other than hiding any buttons in there. 
 	//*/
 
-		Property.IsLoading = state;
+		Property.IsBusy = state;
 	
 		if(state) {
 			this.Struct.ButtonBar
