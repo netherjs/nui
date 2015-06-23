@@ -13,7 +13,7 @@ NUI.Dialog = function(opt) {
 	var Property = {
 		Container: 'body',
 		Title: 'NUI Dialog',
-		CancelLabel: '&times;',
+		CloseLabel: '&times;',
 		Content: 'This is a dialog.',
 		Class: null,
 		Show: true,
@@ -23,6 +23,7 @@ NUI.Dialog = function(opt) {
 		OnAccept: null,
 		OnCancel: null,
 		OnShow: null,
+		OnClose: null,
 		Buttons: [],
 		Height: 'auto',
 		Width: 'auto',
@@ -48,9 +49,9 @@ NUI.Dialog = function(opt) {
 			jQuery('<header />')
 			.append(
 				jQuery('<button />')
-				.html(Property.CancelLabel)
+				.html(Property.CloseLabel)
 				.on('mousedown',function(e){ return false; })
-				.on('click',function(e){ that.Cancel(); return false; })
+				.on('click',function(e){ that.Close(); return false; })
 			)
 			.append(
 				jQuery('<span />')
@@ -139,12 +140,31 @@ NUI.Dialog = function(opt) {
 		return this;
 	};
 	
+	this.Close = function() {
+	/*//
+	@return self
+	tell the widget that the user has canceled the dialog via the close button.
+	//*/
+	
+		if(Property.IsBusy) return;
+		
+		if(Property.OnClose) Property.OnClose();
+		else if(Property.OnCancel) Property.OnCancel();
+		else this.Destroy();
+	
+		return this;
+	};
+	
 	this.Struct.Root
 	.find('.NUI-Dialog-Accept')
 	.click(this.Accept);
 	
 	this.Struct.Root
 	.find('.NUI-Dialog-Cancel')
+	.click(this.Cancel);
+
+	this.Struct.Root
+	.find('.NUI-Dialog-Close')
 	.click(this.Cancel);
 
 	////////////////////////
