@@ -82,6 +82,10 @@
 	color:#E5A09F;
 }
 
+.NUI-Dialog header span {
+	margin-right:20px;
+}
+
 .NUI-Dialog section {
 	padding:10px;
 }
