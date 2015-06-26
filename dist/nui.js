@@ -287,7 +287,16 @@ NUI.Traits = {
 		var el;
 		
 		if(el = this.Get(what))
-		el.show();
+		el.show().removeClass('NUI-Hidden');
+		
+		// allow the element to do things it needs on show.
+		if(typeof this.OnShow === 'function')
+		this.OnShow();
+		
+		// allow any custom show events.
+		if(typeof this.Config !== 'undefined')
+		if(typeof this.Config.OnShow === 'function')
+		this.Config.OnShow();
 		
 		return this;
 	}
@@ -612,19 +621,33 @@ put things inside of it that demand attention.
 /////////////////////////////////////////////////////////////////////////////*/
 
 NUI.Overlay = function(opt) {
-	var that = this;
 
-	var Property = {
+	var that = this;
+	this.Destroy = NUI.Traits.DestroyFromStruct;
+	this.Get = NUI.Traits.GetFromStruct;
+	this.Hide = NUI.Traits.HideFromStruct;
+	this.Show = NUI.Traits.ShowFromStruct;
+	
+	this.OnShow = function() {
+		jQuery(window).resize();
+		return;
+	};
+
+	////////////////////////
+	////////////////////////
+
+	this.Config = {
 		Container: 'body',
 		Content: null,
 		Class: null,
 		Show: true,
 		HandleResize: true,
 		OnClick: null,
-		OnClose: null
+		OnClose: null,
+		OnShow: null
 	};
 
-	NUI.Util.MergeProperties(opt,Property);
+	NUI.Util.MergeProperties(opt,this.Config);
 
 	////////////////////////
 	////////////////////////
@@ -632,45 +655,43 @@ NUI.Overlay = function(opt) {
 	this.Struct = {
 		Root: (
 			jQuery('<div />')
-			.addClass('NUI-Widget')
+			.addClass('NUI-Widget NUI-Hidden')
 			.addClass('NUI-Overlay')
-			.addClass(Property.Show===true?'NUI-Block':'NUI-Hidden')
-			.addClass(Property.Class)
+			.addClass(this.Config.Class)
 		)
 	};
 
-	// compile the element.
 	this.Struct.Root
-	.append(Property.Content.valueOf());
-	
-	// allow repositioning when window size changes.
-	if(Property.HandleResize) {
+	.append(this.Config.Content.valueOf());
+
+	////////////////////////
+	////////////////////////
+
+	if(this.Config.HandleResize) {
 		jQuery(window).on('resize',function(){
-			var element = Property.Content.valueOf();
+			var element = that.Config.Content.valueOf();
 			
 			if(!element.attr('nui-moved'))
-			NUI.Util.CenterInParent(Property.Content.valueOf());
+			NUI.Util.CenterInParent(that.Config.Content.valueOf());
 			
 			return;
 		});
 	}
 	
-	// add the elmeent into the dom.
-	if(Property.Container) {
-		jQuery(Property.Container)
+	if(this.Config.Container) {
+		jQuery(this.Config.Container)
 		.append(this.Struct.Root);
 	}
-
-	// center the child.
-	if(Property.Content) {
-		NUI.Util.CenterInParent(Property.Content.valueOf());
+	
+	if(this.Config.Show) {
+		this.Show();
 	}
 
 	////////////////////////
 	////////////////////////
 	
 	this.Close = function() {
-		if(Property.OnClose) Property.OnClose();
+		if(this.Config.OnClose) this.Config.OnClose();
 		else that.Destroy();
 		
 		return that;
@@ -682,14 +703,9 @@ NUI.Overlay = function(opt) {
 
 	////////////////////////
 	////////////////////////
-	
-	this.Destroy = NUI.Traits.DestroyFromStruct;
-	this.Get = NUI.Traits.GetFromStruct;
-	this.Hide = NUI.Traits.HideFromStruct;
-	this.Show = NUI.Traits.ShowFromStruct;
+
 };
 
 NUI.Overlay.prototype.valueOf = NUI.Traits.GetFromStruct;
-
 
 

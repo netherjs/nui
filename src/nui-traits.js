@@ -58,7 +58,16 @@ NUI.Traits = {
 		var el;
 		
 		if(el = this.Get(what))
-		el.show();
+		el.show().removeClass('NUI-Hidden');
+		
+		// allow the element to do things it needs on show.
+		if(typeof this.OnShow === 'function')
+		this.OnShow();
+		
+		// allow any custom show events.
+		if(typeof this.Config !== 'undefined')
+		if(typeof this.Config.OnShow === 'function')
+		this.Config.OnShow();
 		
 		return this;
 	}
