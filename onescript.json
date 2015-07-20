@@ -1,0 +1,20 @@
+{
+    "AddFileHeader": true,
+    "AddScriptHeader": true,
+    "Directories": [
+        "plugins"
+    ],
+    "DistDir": "dist",
+    "Extensions": [
+        "js"
+    ],
+    "Files": [
+        "nui-main.js",
+        "nui-traits.js",
+        "nui-util.js"
+    ],
+    "Minify": false,
+    "OutputFile": "nui.js",
+    "OutputMinFile": "nui.min.js",
+    "Print": false
+}

@@ -10,6 +10,6 @@
 		  "role":"developer" }
 	],
 	"require": {
-		"netherphp/onescript": "~1.1.0"
+		"netherphp/onescript": "^1.1.1"
 	}
 }

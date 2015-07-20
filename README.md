@@ -6,6 +6,24 @@ I am really surprised at how much I was able to do with so little code. Why do J
 frameworks need to be giant and overly complicated? Of course, I cheated, this
 depends on jQuery, but, still, compared to like jQuery UI...
 
+# Installing Like The Common Rabble
+
+Get this source anyway you want - git clone, download the zip, whatever. Copy the
+contents of the `dist` directory to where you want to serve the files from.
+
+# Installing with Composer
+
+If you are using a PHP project with Composer you can deploy this with OneScript.
+Pretend our project is `/opt/website` with the public webroot as
+`/opt/website/www` and we want to deploy NUI to `/opt/website/www/share/nui` -
+this in turn making `/share/nui/nui.js` accessible for the webpage...
+
+	$ composer require netherjs/nui
+	$ php vendor/bin/nether-onescript vendor/netherjs/nui --deploy=www/share/nui
+	
+Any time you update NUI just rerun the OneScript command and it will build and
+re-deploy the updates to your public web.
+
 # Overview
 
 ### NUI.Overlay

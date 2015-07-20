@@ -1,4 +1,19 @@
-//// src/nui-main.js //////////////////////////////////////////////////////////
+/*// nether-onescript //
+@date 2015-07-19 21:42:47
+@files [
+    "src\\nui-main.js",
+    "src\\nui-traits.js",
+    "src\\nui-util.js",
+    "src\\plugins\\nui-button.js",
+    "src\\plugins\\nui-dialog.js",
+    "src\\plugins\\nui-image.js",
+    "src\\plugins\\nui-overlay.js"
+]
+//*/
+
+///////////////////////////////////////////////////////////////////////////
+// src\nui-main.js ////////////////////////////////////////////////////////
+
 /*// NUI - Nether UI //////////////////////////////////////////////////////////
 The framework made by someone who hates Javascript for people who hate
 Javascript. This here is the main file. Currently it does not do much except
@@ -111,8 +126,88 @@ jQuery(document).ready(function(){
 	
 });
 
+///////////////////////////////////////////////////////////////////////////
+// src\nui-traits.js //////////////////////////////////////////////////////
 
-//// src/nui-util.js //////////////////////////////////////////////////////////
+NUI.Traits = {
+
+	GetFromStruct:
+	function(what) {
+	/*//
+	@argv string StructPropertyName default "Root"
+	@return jQuery | false
+	fetch the requested thing from the struct property. if what was
+	requested was not found false will be returned. if nothing was
+	specified then the root of the element will be returned.
+	//*/
+	
+		if(what && this.Struct.hasOwnProperty(what)) return this.Struct[what];
+		else if(what) return false;
+		else return this.Struct.Root;			
+	},
+	
+	DestroyFromStruct:
+	function(what) {
+	/*//
+	@argv string StructPropertyName default "Root"
+	@return self
+	hide and remove this widget from the DOM. it'll be useless after this.
+	//*/
+
+		var el;
+		
+		if(el = this.Get(what))
+		el.hide().remove();			
+		
+		return this;	
+	},
+	
+	HideFromStruct:
+	function(what) {
+	/*//
+	@argv string StructPropertyName default "Root"
+	@return self
+	hide this widget.
+	//*/
+	
+		var el;
+		
+		if(el = this.Get(what))
+		el.hide();
+		
+		return this;
+	},
+	
+	ShowFromStruct:
+	function(what) {
+	/*//
+	@argv string StructPropertyName default "Root"
+	@return self
+	show this widget.
+	//*/
+	
+		var el;
+		
+		if(el = this.Get(what))
+		el.show().removeClass('NUI-Hidden');
+		
+		// allow the element to do things it needs on show.
+		if(typeof this.OnShow === 'function')
+		this.OnShow();
+		
+		// allow any custom show events.
+		if(typeof this.Config !== 'undefined')
+		if(typeof this.Config.OnShow === 'function')
+		this.Config.OnShow();
+		
+		return this;
+	}
+
+};
+
+///////////////////////////////////////////////////////////////////////////
+// src\nui-util.js ////////////////////////////////////////////////////////
+
 /*// NUI Utility //////////////////////////////////////////////////////////////
 This contains utility methods that will be used in various parts of the
 framework to prevent duplication. But I shouldn't have to explain
@@ -225,86 +320,9 @@ NUI.Util = {
 	
 };
 
+///////////////////////////////////////////////////////////////////////////
+// src\plugins\nui-button.js //////////////////////////////////////////////
 
-//// src/nui-traits.js ////////////////////////////////////////////////////////
-NUI.Traits = {
-
-	GetFromStruct:
-	function(what) {
-	/*//
-	@argv string StructPropertyName default "Root"
-	@return jQuery | false
-	fetch the requested thing from the struct property. if what was
-	requested was not found false will be returned. if nothing was
-	specified then the root of the element will be returned.
-	//*/
-	
-		if(what && this.Struct.hasOwnProperty(what)) return this.Struct[what];
-		else if(what) return false;
-		else return this.Struct.Root;			
-	},
-	
-	DestroyFromStruct:
-	function(what) {
-	/*//
-	@argv string StructPropertyName default "Root"
-	@return self
-	hide and remove this widget from the DOM. it'll be useless after this.
-	//*/
-
-		var el;
-		
-		if(el = this.Get(what))
-		el.hide().remove();			
-		
-		return this;	
-	},
-	
-	HideFromStruct:
-	function(what) {
-	/*//
-	@argv string StructPropertyName default "Root"
-	@return self
-	hide this widget.
-	//*/
-	
-		var el;
-		
-		if(el = this.Get(what))
-		el.hide();
-		
-		return this;
-	},
-	
-	ShowFromStruct:
-	function(what) {
-	/*//
-	@argv string StructPropertyName default "Root"
-	@return self
-	show this widget.
-	//*/
-	
-		var el;
-		
-		if(el = this.Get(what))
-		el.show().removeClass('NUI-Hidden');
-		
-		// allow the element to do things it needs on show.
-		if(typeof this.OnShow === 'function')
-		this.OnShow();
-		
-		// allow any custom show events.
-		if(typeof this.Config !== 'undefined')
-		if(typeof this.Config.OnShow === 'function')
-		this.Config.OnShow();
-		
-		return this;
-	}
-
-};
-
-
-//// plugins/nui-button.js ////////////////////////////////////////////////////
 /*// NUI.Button ///////////////////////////////////////////////////////////////
 This provides a button widget that can do stuff when clicked. Amazing.
 /////////////////////////////////////////////////////////////////////////////*/
@@ -351,7 +369,9 @@ NUI.Button = function(opt) {
 
 NUI.Button.prototype.valueOf = NUI.Traits.GetFromStruct;
 
-//// plugins/nui-dialog.js ////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+// src\plugins\nui-dialog.js //////////////////////////////////////////////
+
 /*// NUI.Dialog ///////////////////////////////////////////////////////////////
 This provides a widget which looks and smells like a dialog. It currently is
 not movable but that is a planned feature. Right now the most useful thing to
@@ -567,8 +587,9 @@ NUI.Dialog = function(opt) {
 
 NUI.Dialog.prototype.valueOf = NUI.Traits.GetFromStruct;
 
+///////////////////////////////////////////////////////////////////////////
+// src\plugins\nui-image.js ///////////////////////////////////////////////
 
-//// plugins/nui-image.js /////////////////////////////////////////////////////
 /*// NUI.Image //////////////////////////////////////////////////////////////
 It's uh... an image.
 /////////////////////////////////////////////////////////////////////////////*/
@@ -612,8 +633,9 @@ NUI.Image = function(opt) {
 
 NUI.Image.prototype.valueOf = NUI.Traits.GetFromStruct;
 
+///////////////////////////////////////////////////////////////////////////
+// src\plugins\nui-overlay.js /////////////////////////////////////////////
 
-//// plugins/nui-overlay.js ///////////////////////////////////////////////////
 /*// NUI.OVerlay //////////////////////////////////////////////////////////////
 This provides a widget which covers the entire screen in (with my default css)
 a translucent shade of black, blocking access to anything below. You can then
@@ -707,5 +729,4 @@ NUI.Overlay = function(opt) {
 };
 
 NUI.Overlay.prototype.valueOf = NUI.Traits.GetFromStruct;
-
 
