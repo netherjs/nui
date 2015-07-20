@@ -1,0 +1,15 @@
+{
+	"name":"netherjs/nui",
+	"description":"A basic Get-It-Done Javascript UI toolkit",
+	"keywords":["js","ui"],
+	"license":"BSD-3-Clause",
+	"authors":[
+		{ "name":"Bob Majdak Jr",
+		  "email":"bob@nether.io",
+		  "homepage":"http://nether.io/nui",
+		  "role":"developer" }
+	],
+	"require": {
+		"netherphp/onescript": "~1.1.0"
+	}
+}
