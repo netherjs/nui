@@ -4,23 +4,13 @@ a translucent shade of black, blocking access to anything below. You can then
 put things inside of it that demand attention.
 /////////////////////////////////////////////////////////////////////////////*/
 
-NUI.Overlay = function(opt) {
-
+NUI.Overlay = function(Input) {
 	var that = this;
-	this.Destroy = NUI.Traits.DestroyFromStruct;
-	this.Get = NUI.Traits.GetFromStruct;
-	this.Hide = NUI.Traits.HideFromStruct;
-	this.Show = NUI.Traits.ShowFromStruct;
-	
-	this.OnShow = function() {
-		jQuery(window).resize();
-		return;
-	};
 
 	////////////////////////
 	////////////////////////
 
-	this.Config = {
+	var Property = {
 		Container: 'body',
 		Content: null,
 		Class: null,
@@ -31,7 +21,7 @@ NUI.Overlay = function(opt) {
 		OnShow: null
 	};
 
-	NUI.Util.MergeProperties(opt,this.Config);
+	NUI.Util.MergeProperties(Input,Property);
 
 	////////////////////////
 	////////////////////////
@@ -41,52 +31,62 @@ NUI.Overlay = function(opt) {
 			jQuery('<div />')
 			.addClass('NUI-Widget NUI-Hidden')
 			.addClass('NUI-Overlay')
-			.addClass(this.Config.Class)
+			.addClass(Property.Class)
 		)
 	};
 
 	this.Struct.Root
-	.append(this.Config.Content.valueOf());
+	.append(Property.Content.valueOf());
 
 	////////////////////////
 	////////////////////////
 
-	if(this.Config.HandleResize) {
+	if(Property.HandleResize) {
 		jQuery(window).on('resize',function(){
-			var element = that.Config.Content.valueOf();
-			
+			var element = that.Struct.Root.find(':first-child');
+
 			if(!element.attr('nui-moved'))
-			NUI.Util.CenterInParent(that.Config.Content.valueOf());
-			
+			NUI.Util.CenterInParent(element);
+
 			return;
 		});
 	}
-	
-	if(this.Config.Container) {
-		jQuery(this.Config.Container)
+
+	if(Property.Container) {
+		jQuery(Property.Container)
 		.append(this.Struct.Root);
-	}
-	
-	if(this.Config.Show) {
-		this.Show();
 	}
 
 	////////////////////////
 	////////////////////////
-	
+
 	this.Close = function() {
-		if(this.Config.OnClose) this.Config.OnClose();
+		if(Property.OnClose) Property.OnClose();
 		else that.Destroy();
-		
+
 		return that;
 	};
-	
+
 	jQuery(this.Struct.Root)
 	.find('.NUI-Overlay-Close')
 	.on('click',this.Close);
 
 	////////////////////////
 	////////////////////////
+
+	this.Destroy = NUI.Traits.DestroyFromStruct;
+	this.Get = NUI.Traits.GetFromStruct;
+	this.Hide = NUI.Traits.HideFromStruct;
+	this.Show = NUI.Traits.ShowFromStruct;
+
+	this.OnShow = function() {
+		jQuery(window).resize();
+		return;
+	};
+
+	if(Property.Show) {
+		this.Show();
+	}
 
 };
 

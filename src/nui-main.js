@@ -6,10 +6,10 @@ it will look more useful in the future.
 /////////////////////////////////////////////////////////////////////////////*/
 
 var NUI = {
-	
+
 	GetVersion:
-	function() { return '1.0.0'; },
-	
+	function() { return '1.0.1'; },
+
 	Move: {
 	/*//
 	this subobject will hold the API for allowing for and moving any widgets
@@ -21,13 +21,13 @@ var NUI = {
 		@type array
 		a list of all the objects that which to be moved.
 		//*/
-		
+
 		LastX: 0, LastY: 0,
 		/*//
 		@type int
 		the last known position of the mouse prior to the current move.
 		//*/
-		
+
 		On:
 		function(e){
 		/*//
@@ -37,10 +37,10 @@ var NUI = {
 		once if we so choose to do so later, maybe like for some icon list
 		or whatever.
 		//*/
-			
+
 			var DeltaX = this.LastX - e.clientX;
 			var DeltaY = this.LastY - e.clientY;
-			
+
 			if(this.Queue.length)
 			jQuery.each(this.Queue,function(key,object){
 				object.offset(function(idx,pos){
@@ -51,12 +51,12 @@ var NUI = {
 					};
 				});
 			});
-			
+
 			this.LastX = e.clientX;
 			this.LastY = e.clientY;
 			return;
 		},
-		
+
 		Register:
 		function(object){
 		/*//
@@ -64,20 +64,20 @@ var NUI = {
 		add something to the list of things that wants to be moved around
 		so that it can be processed later.
 		//*/
-		
+
 			var found = false;
 			jQuery.each(this.Queue,function(key,value){
 				if(value === object) found = true;
 			});
-			
+
 			if(!found) {
 				jQuery('body').addClass('NUI-NoSelect');
 				this.Queue.push(object);
 			}
-			
+
 			return;
 		},
-		
+
 		Unregister:
 		function(object){
 		/*//
@@ -85,7 +85,7 @@ var NUI = {
 		remove something from the list of things that wants to be moved
 		around so that it stops moving around.
 		//*/
-		
+
 			var found = false;
 			var that = this;
 			jQuery.each(this.Queue,function(key,value){
@@ -93,19 +93,19 @@ var NUI = {
 					that.Queue.splice(key,1);
 				}
 			});
-			
+
 			if(!that.Queue.length)
 			jQuery('body').removeClass('NUI-NoSelect');
-			
-			return;		
-		}		
+
+			return;
+		}
 	}
 
 };
 
 jQuery(document).ready(function(){
-	
+
 	jQuery(this)
 	.on('mousemove',function(e){ NUI.Move.On(e); });
-	
+
 });

@@ -9,7 +9,7 @@ NUI.Dialog = function(opt) {
 
 	////////////////////////
 	////////////////////////
-	
+
 	var Property = {
 		Container: 'body',
 		Title: 'NUI Dialog',
@@ -29,12 +29,12 @@ NUI.Dialog = function(opt) {
 		Width: 'auto',
 		IsBusy: false
 	};
-	
+
 	NUI.Util.MergeProperties(opt,Property);
-	
+
 	////////////////////////
 	////////////////////////
-	
+
 	this.Struct = {
 		Root: (
 			jQuery('<div />')
@@ -60,7 +60,7 @@ NUI.Dialog = function(opt) {
 		),
 		Content: (
 			jQuery('<section />')
-			.html(Property.Content.valueOf())	
+			.html(Property.Content.valueOf())
 		),
 		ButtonBar: (
 			jQuery('<footer />')
@@ -88,12 +88,12 @@ NUI.Dialog = function(opt) {
 		.addClass('NUI-Moveable')
 		.on('mousedown',function(){ NUI.Move.Register(that.Struct.Root); })
 		.on('mouseup',function(){ NUI.Move.Unregister(that.Struct.Root); });
-	}	
-	
+	}
+
 	// add dialog to the page.
 	if(Property.Container) {
 		jQuery(Property.Container)
-		.append(this.Struct.Root);	
+		.append(this.Struct.Root);
 	}
 
 	// position the dialog.
@@ -109,56 +109,56 @@ NUI.Dialog = function(opt) {
 
 	////////////////////////
 	////////////////////////
-	
+
 	this.Accept = function() {
 	/*//
 	@return self
 	tell the widget that the user has accepted whatever the dialog was about
 	and to execute the OnAccept action if any.
 	//*/
-	
+
 		if(Property.IsBusy) return;
-		
+
 		if(Property.OnAccept) Property.OnAccept();
 		else this.Destroy();
-		
+
 		return this;
 	};
-	
+
 	this.Cancel = function() {
 	/*//
 	@return self
 	tell the widget that the user has canceled whatever the dialog was about
 	and to execute the OnCancel action if any.
 	//*/
-	
+
 		if(Property.IsBusy) return;
-		
+
 		if(Property.OnCancel) Property.OnCancel();
 		else this.Destroy();
 
 		return this;
 	};
-	
+
 	this.Close = function() {
 	/*//
 	@return self
 	tell the widget that the user has canceled the dialog via the close button.
 	//*/
-	
+
 		if(Property.IsBusy) return;
-		
+
 		if(Property.OnClose) Property.OnClose();
 		else if(Property.OnCancel) Property.OnCancel();
 		else this.Destroy();
-	
+
 		return this;
 	};
-	
+
 	this.Struct.Root
 	.find('.NUI-Dialog-Accept')
 	.click(this.Accept);
-	
+
 	this.Struct.Root
 	.find('.NUI-Dialog-Cancel')
 	.click(this.Cancel);
@@ -169,7 +169,7 @@ NUI.Dialog = function(opt) {
 
 	////////////////////////
 	////////////////////////
-	
+
 	this.SetBusy = function(state) {
 	/*//
 	@argv bool IsThinking
@@ -180,35 +180,35 @@ NUI.Dialog = function(opt) {
 	the OnAccept waits on async stuff (or whatever you wish). this does assume
 	however that you ONLY add NUI.Button or NUI.Image to the button bar of the
 	dialog. if you do not add a hidden NUI.Image, it will appear to have no
-	effect other than hiding any buttons in there. 
+	effect other than hiding any buttons in there.
 	//*/
 
 		Property.IsBusy = state;
-	
+
 		if(state) {
 			this.Struct.ButtonBar
 			.find('button').hide();
-	
+
 			this.Struct.ButtonBar
 			.find('img').show();
 		} else {
 			this.Struct.ButtonBar
 			.find('img').hide();
-			
+
 			this.Struct.ButtonBar
 			.find('button').show();
 		}
-		
+
 		return this;
 	};
-	
+
 	////////////////
 	////////////////
-	
+
 	this.Destroy = NUI.Traits.DestroyFromStruct;
 	this.Get = NUI.Traits.GetFromStruct;
 	this.Show = NUI.Traits.ShowFromStruct;
-	this.Hide = NUI.Traits.HideFromStruct;		
+	this.Hide = NUI.Traits.HideFromStruct;
 };
 
 NUI.Dialog.prototype.valueOf = NUI.Traits.GetFromStruct;

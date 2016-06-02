@@ -1,5 +1,5 @@
 /*// nether-onescript //
-@date 2015-07-20 11:59:59
+@date 2016-06-02 17:02:11
 @files [
     "src\/nui-main.js",
     "src\/nui-traits.js",
@@ -22,10 +22,10 @@ it will look more useful in the future.
 /////////////////////////////////////////////////////////////////////////////*/
 
 var NUI = {
-	
+
 	GetVersion:
-	function() { return '1.0.0'; },
-	
+	function() { return '1.0.1'; },
+
 	Move: {
 	/*//
 	this subobject will hold the API for allowing for and moving any widgets
@@ -37,13 +37,13 @@ var NUI = {
 		@type array
 		a list of all the objects that which to be moved.
 		//*/
-		
+
 		LastX: 0, LastY: 0,
 		/*//
 		@type int
 		the last known position of the mouse prior to the current move.
 		//*/
-		
+
 		On:
 		function(e){
 		/*//
@@ -53,10 +53,10 @@ var NUI = {
 		once if we so choose to do so later, maybe like for some icon list
 		or whatever.
 		//*/
-			
+
 			var DeltaX = this.LastX - e.clientX;
 			var DeltaY = this.LastY - e.clientY;
-			
+
 			if(this.Queue.length)
 			jQuery.each(this.Queue,function(key,object){
 				object.offset(function(idx,pos){
@@ -67,12 +67,12 @@ var NUI = {
 					};
 				});
 			});
-			
+
 			this.LastX = e.clientX;
 			this.LastY = e.clientY;
 			return;
 		},
-		
+
 		Register:
 		function(object){
 		/*//
@@ -80,20 +80,20 @@ var NUI = {
 		add something to the list of things that wants to be moved around
 		so that it can be processed later.
 		//*/
-		
+
 			var found = false;
 			jQuery.each(this.Queue,function(key,value){
 				if(value === object) found = true;
 			});
-			
+
 			if(!found) {
 				jQuery('body').addClass('NUI-NoSelect');
 				this.Queue.push(object);
 			}
-			
+
 			return;
 		},
-		
+
 		Unregister:
 		function(object){
 		/*//
@@ -101,7 +101,7 @@ var NUI = {
 		remove something from the list of things that wants to be moved
 		around so that it stops moving around.
 		//*/
-		
+
 			var found = false;
 			var that = this;
 			jQuery.each(this.Queue,function(key,value){
@@ -109,21 +109,21 @@ var NUI = {
 					that.Queue.splice(key,1);
 				}
 			});
-			
+
 			if(!that.Queue.length)
 			jQuery('body').removeClass('NUI-NoSelect');
-			
-			return;		
-		}		
+
+			return;
+		}
 	}
 
 };
 
 jQuery(document).ready(function(){
-	
+
 	jQuery(this)
 	.on('mousemove',function(e){ NUI.Move.On(e); });
-	
+
 });
 
 ///////////////////////////////////////////////////////////////////////////
@@ -383,7 +383,7 @@ NUI.Dialog = function(opt) {
 
 	////////////////////////
 	////////////////////////
-	
+
 	var Property = {
 		Container: 'body',
 		Title: 'NUI Dialog',
@@ -403,12 +403,12 @@ NUI.Dialog = function(opt) {
 		Width: 'auto',
 		IsBusy: false
 	};
-	
+
 	NUI.Util.MergeProperties(opt,Property);
-	
+
 	////////////////////////
 	////////////////////////
-	
+
 	this.Struct = {
 		Root: (
 			jQuery('<div />')
@@ -434,7 +434,7 @@ NUI.Dialog = function(opt) {
 		),
 		Content: (
 			jQuery('<section />')
-			.html(Property.Content.valueOf())	
+			.html(Property.Content.valueOf())
 		),
 		ButtonBar: (
 			jQuery('<footer />')
@@ -462,12 +462,12 @@ NUI.Dialog = function(opt) {
 		.addClass('NUI-Moveable')
 		.on('mousedown',function(){ NUI.Move.Register(that.Struct.Root); })
 		.on('mouseup',function(){ NUI.Move.Unregister(that.Struct.Root); });
-	}	
-	
+	}
+
 	// add dialog to the page.
 	if(Property.Container) {
 		jQuery(Property.Container)
-		.append(this.Struct.Root);	
+		.append(this.Struct.Root);
 	}
 
 	// position the dialog.
@@ -483,56 +483,56 @@ NUI.Dialog = function(opt) {
 
 	////////////////////////
 	////////////////////////
-	
+
 	this.Accept = function() {
 	/*//
 	@return self
 	tell the widget that the user has accepted whatever the dialog was about
 	and to execute the OnAccept action if any.
 	//*/
-	
+
 		if(Property.IsBusy) return;
-		
+
 		if(Property.OnAccept) Property.OnAccept();
 		else this.Destroy();
-		
+
 		return this;
 	};
-	
+
 	this.Cancel = function() {
 	/*//
 	@return self
 	tell the widget that the user has canceled whatever the dialog was about
 	and to execute the OnCancel action if any.
 	//*/
-	
+
 		if(Property.IsBusy) return;
-		
+
 		if(Property.OnCancel) Property.OnCancel();
 		else this.Destroy();
 
 		return this;
 	};
-	
+
 	this.Close = function() {
 	/*//
 	@return self
 	tell the widget that the user has canceled the dialog via the close button.
 	//*/
-	
+
 		if(Property.IsBusy) return;
-		
+
 		if(Property.OnClose) Property.OnClose();
 		else if(Property.OnCancel) Property.OnCancel();
 		else this.Destroy();
-	
+
 		return this;
 	};
-	
+
 	this.Struct.Root
 	.find('.NUI-Dialog-Accept')
 	.click(this.Accept);
-	
+
 	this.Struct.Root
 	.find('.NUI-Dialog-Cancel')
 	.click(this.Cancel);
@@ -543,7 +543,7 @@ NUI.Dialog = function(opt) {
 
 	////////////////////////
 	////////////////////////
-	
+
 	this.SetBusy = function(state) {
 	/*//
 	@argv bool IsThinking
@@ -554,35 +554,35 @@ NUI.Dialog = function(opt) {
 	the OnAccept waits on async stuff (or whatever you wish). this does assume
 	however that you ONLY add NUI.Button or NUI.Image to the button bar of the
 	dialog. if you do not add a hidden NUI.Image, it will appear to have no
-	effect other than hiding any buttons in there. 
+	effect other than hiding any buttons in there.
 	//*/
 
 		Property.IsBusy = state;
-	
+
 		if(state) {
 			this.Struct.ButtonBar
 			.find('button').hide();
-	
+
 			this.Struct.ButtonBar
 			.find('img').show();
 		} else {
 			this.Struct.ButtonBar
 			.find('img').hide();
-			
+
 			this.Struct.ButtonBar
 			.find('button').show();
 		}
-		
+
 		return this;
 	};
-	
+
 	////////////////
 	////////////////
-	
+
 	this.Destroy = NUI.Traits.DestroyFromStruct;
 	this.Get = NUI.Traits.GetFromStruct;
 	this.Show = NUI.Traits.ShowFromStruct;
-	this.Hide = NUI.Traits.HideFromStruct;		
+	this.Hide = NUI.Traits.HideFromStruct;
 };
 
 NUI.Dialog.prototype.valueOf = NUI.Traits.GetFromStruct;
@@ -642,23 +642,13 @@ a translucent shade of black, blocking access to anything below. You can then
 put things inside of it that demand attention.
 /////////////////////////////////////////////////////////////////////////////*/
 
-NUI.Overlay = function(opt) {
-
+NUI.Overlay = function(Input) {
 	var that = this;
-	this.Destroy = NUI.Traits.DestroyFromStruct;
-	this.Get = NUI.Traits.GetFromStruct;
-	this.Hide = NUI.Traits.HideFromStruct;
-	this.Show = NUI.Traits.ShowFromStruct;
-	
-	this.OnShow = function() {
-		jQuery(window).resize();
-		return;
-	};
 
 	////////////////////////
 	////////////////////////
 
-	this.Config = {
+	var Property = {
 		Container: 'body',
 		Content: null,
 		Class: null,
@@ -669,7 +659,7 @@ NUI.Overlay = function(opt) {
 		OnShow: null
 	};
 
-	NUI.Util.MergeProperties(opt,this.Config);
+	NUI.Util.MergeProperties(Input,Property);
 
 	////////////////////////
 	////////////////////////
@@ -679,52 +669,62 @@ NUI.Overlay = function(opt) {
 			jQuery('<div />')
 			.addClass('NUI-Widget NUI-Hidden')
 			.addClass('NUI-Overlay')
-			.addClass(this.Config.Class)
+			.addClass(Property.Class)
 		)
 	};
 
 	this.Struct.Root
-	.append(this.Config.Content.valueOf());
+	.append(Property.Content.valueOf());
 
 	////////////////////////
 	////////////////////////
 
-	if(this.Config.HandleResize) {
+	if(Property.HandleResize) {
 		jQuery(window).on('resize',function(){
-			var element = that.Config.Content.valueOf();
-			
+			var element = that.Struct.Root.find(':first-child');
+
 			if(!element.attr('nui-moved'))
-			NUI.Util.CenterInParent(that.Config.Content.valueOf());
-			
+			NUI.Util.CenterInParent(element);
+
 			return;
 		});
 	}
-	
-	if(this.Config.Container) {
-		jQuery(this.Config.Container)
+
+	if(Property.Container) {
+		jQuery(Property.Container)
 		.append(this.Struct.Root);
-	}
-	
-	if(this.Config.Show) {
-		this.Show();
 	}
 
 	////////////////////////
 	////////////////////////
-	
+
 	this.Close = function() {
-		if(this.Config.OnClose) this.Config.OnClose();
+		if(Property.OnClose) Property.OnClose();
 		else that.Destroy();
-		
+
 		return that;
 	};
-	
+
 	jQuery(this.Struct.Root)
 	.find('.NUI-Overlay-Close')
 	.on('click',this.Close);
 
 	////////////////////////
 	////////////////////////
+
+	this.Destroy = NUI.Traits.DestroyFromStruct;
+	this.Get = NUI.Traits.GetFromStruct;
+	this.Hide = NUI.Traits.HideFromStruct;
+	this.Show = NUI.Traits.ShowFromStruct;
+
+	this.OnShow = function() {
+		jQuery(window).resize();
+		return;
+	};
+
+	if(Property.Show) {
+		this.Show();
+	}
 
 };
 
