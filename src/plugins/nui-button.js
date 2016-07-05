@@ -11,10 +11,10 @@ NUI.Button = function(opt) {
 	};
 
 	NUI.Util.MergeProperties(opt,Property);
-	
+
 	////////////////////////
 	////////////////////////
-	
+
 	this.Struct = {
 		Root: (
 			jQuery('<button />')
@@ -22,12 +22,12 @@ NUI.Button = function(opt) {
 			.text(Property.Label)
 		)
 	};
-	
+
 	if(Property.OnClick) {
 		this.Struct.Root
 		.on('click',Property.OnClick);
 	}
-	
+
 	if(Property.Class) {
 		this.Struct.Root
 		.addClass(Property.Class);
@@ -35,7 +35,15 @@ NUI.Button = function(opt) {
 
 	////////////////////////
 	////////////////////////
-	
+
+	this.GetProperty = function(Key){
+		if(typeof Property[Key] !== "undefined")
+		return Property[Key];
+
+		else
+		return Property;
+	};
+
 	this.Destroy = NUI.Traits.DestroyFromStruct;
 	this.Get = NUI.Traits.GetFromStruct;
 	this.Hide = NUI.Traits.HideFromStruct;

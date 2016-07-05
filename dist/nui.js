@@ -1,5 +1,5 @@
 /*// nether-onescript //
-@date 2016-06-02 17:02:11
+@date 2016-07-05 16:39:06
 @files [
     "src\/nui-main.js",
     "src\/nui-traits.js",
@@ -132,7 +132,7 @@ jQuery(document).ready(function(){
 NUI.Traits = {
 
 	GetFromStruct:
-	function(what) {
+	function(What) {
 	/*//
 	@argv string StructPropertyName default "Root"
 	@return jQuery | false
@@ -140,66 +140,87 @@ NUI.Traits = {
 	requested was not found false will be returned. if nothing was
 	specified then the root of the element will be returned.
 	//*/
-	
-		if(what && this.Struct.hasOwnProperty(what)) return this.Struct[what];
-		else if(what) return false;
-		else return this.Struct.Root;			
+
+		if(What && this.Struct.hasOwnProperty(What)) return this.Struct[What];
+		else if(What) return false;
+		else return this.Struct.Root;
 	},
-	
+
 	DestroyFromStruct:
-	function(what) {
+	function(What) {
 	/*//
 	@argv string StructPropertyName default "Root"
 	@return self
 	hide and remove this widget from the DOM. it'll be useless after this.
 	//*/
 
-		var el;
-		
-		if(el = this.Get(what))
-		el.hide().remove();			
-		
-		return this;	
+		var Element = this.Get(What);
+
+		// kill it with fire via jquery.
+		if(Element)
+		Element.hide().remove();
+
+		// allow the element to do things it needs on show.
+		if(typeof this.OnDestroy === 'function')
+		this.OnHide();
+
+		// allow any custom show events.
+		if(typeof this.GetProperty === "function")
+		if(typeof this.GetProperty('OnDestroy') === "function")
+		this.GetProperty('OnDestroy')();
+
+		return this;
 	},
-	
+
 	HideFromStruct:
-	function(what) {
+	function(What) {
 	/*//
 	@argv string StructPropertyName default "Root"
 	@return self
 	hide this widget.
 	//*/
-	
-		var el;
-		
-		if(el = this.Get(what))
-		el.hide();
-		
+
+		var Element = this.Get(What);
+
+		// make it invisible via jquery.
+		if(Element)
+		Element.hide();
+
+		// allow the element to do things it needs on show.
+		if(typeof this.OnHide === 'function')
+		this.OnHide();
+
+		// allow any custom show events.
+		if(typeof this.GetProperty === "function")
+		if(typeof this.GetProperty('OnHide') === "function")
+		this.GetProperty('OnHide')();
+
 		return this;
 	},
-	
+
 	ShowFromStruct:
-	function(what) {
+	function(What) {
 	/*//
 	@argv string StructPropertyName default "Root"
 	@return self
 	show this widget.
 	//*/
-	
-		var el;
-		
-		if(el = this.Get(what))
-		el.show().removeClass('NUI-Hidden');
-		
+
+		var Element = this.Get(What);
+
+		// make it visible via jquery.
+		if(Element)
+		Element.show().removeClass('NUI-Hidden');
+
 		// allow the element to do things it needs on show.
 		if(typeof this.OnShow === 'function')
 		this.OnShow();
-		
+
 		// allow any custom show events.
-		if(typeof this.Config !== 'undefined')
-		if(typeof this.Config.OnShow === 'function')
-		this.Config.OnShow();
-		
+		if(typeof this.GetProperty === "function")
+		if(typeof this.GetProperty('OnShow') === "function")
+		this.GetProperty('OnShow')();
+
 		return this;
 	}
 
@@ -336,10 +357,10 @@ NUI.Button = function(opt) {
 	};
 
 	NUI.Util.MergeProperties(opt,Property);
-	
+
 	////////////////////////
 	////////////////////////
-	
+
 	this.Struct = {
 		Root: (
 			jQuery('<button />')
@@ -347,12 +368,12 @@ NUI.Button = function(opt) {
 			.text(Property.Label)
 		)
 	};
-	
+
 	if(Property.OnClick) {
 		this.Struct.Root
 		.on('click',Property.OnClick);
 	}
-	
+
 	if(Property.Class) {
 		this.Struct.Root
 		.addClass(Property.Class);
@@ -360,7 +381,15 @@ NUI.Button = function(opt) {
 
 	////////////////////////
 	////////////////////////
-	
+
+	this.GetProperty = function(Key){
+		if(typeof Property[Key] !== "undefined")
+		return Property[Key];
+
+		else
+		return Property;
+	};
+
 	this.Destroy = NUI.Traits.DestroyFromStruct;
 	this.Get = NUI.Traits.GetFromStruct;
 	this.Hide = NUI.Traits.HideFromStruct;
@@ -579,6 +608,14 @@ NUI.Dialog = function(opt) {
 	////////////////
 	////////////////
 
+	this.GetProperty = function(Key){
+		if(typeof Property[Key] !== "undefined")
+		return Property[Key];
+
+		else
+		return Property;
+	};
+
 	this.Destroy = NUI.Traits.DestroyFromStruct;
 	this.Get = NUI.Traits.GetFromStruct;
 	this.Show = NUI.Traits.ShowFromStruct;
@@ -602,12 +639,12 @@ NUI.Image = function(opt) {
 		URL: null,
 		Show: true
 	};
-	
+
 	NUI.Util.MergeProperties(opt,Property);
-	
+
 	////////////////////////
 	////////////////////////
-	
+
 	this.Struct = {
 		Root: (
 			jQuery('<img />')
@@ -616,7 +653,7 @@ NUI.Image = function(opt) {
 			.addClass(Property.Class)
 		)
 	};
-	
+
 	if(Property.Container) {
 		jQuery(Property.Container)
 		.append(this.Struct.Root);
@@ -624,6 +661,14 @@ NUI.Image = function(opt) {
 
 	////////////////////////
 	////////////////////////
+
+	this.GetProperty = function(Key){
+		if(typeof Property[Key] !== "undefined")
+		return Property[Key];
+
+		else
+		return Property;
+	};
 
 	this.Destroy = NUI.Traits.DestroyFromStruct;
 	this.Get = NUI.Traits.GetFromStruct;
@@ -712,15 +757,26 @@ NUI.Overlay = function(Input) {
 	////////////////////////
 	////////////////////////
 
-	this.Destroy = NUI.Traits.DestroyFromStruct;
-	this.Get = NUI.Traits.GetFromStruct;
-	this.Hide = NUI.Traits.HideFromStruct;
-	this.Show = NUI.Traits.ShowFromStruct;
-
 	this.OnShow = function() {
 		jQuery(window).resize();
 		return;
 	};
+
+	this.GetProperty = function(Key){
+		if(typeof Property[Key] !== "undefined")
+		return Property[Key];
+
+		else
+		return Property;
+	};
+
+	this.Destroy = NUI.Traits.DestroyFromStruct.bind(this);
+	this.Get = NUI.Traits.GetFromStruct.bind(this);
+	this.Hide = NUI.Traits.HideFromStruct.bind(this);
+	this.Show = NUI.Traits.ShowFromStruct.bind(this);
+
+	////////////////////////
+	////////////////////////
 
 	if(Property.Show) {
 		this.Show();

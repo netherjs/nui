@@ -10,12 +10,12 @@ NUI.Image = function(opt) {
 		URL: null,
 		Show: true
 	};
-	
+
 	NUI.Util.MergeProperties(opt,Property);
-	
+
 	////////////////////////
 	////////////////////////
-	
+
 	this.Struct = {
 		Root: (
 			jQuery('<img />')
@@ -24,7 +24,7 @@ NUI.Image = function(opt) {
 			.addClass(Property.Class)
 		)
 	};
-	
+
 	if(Property.Container) {
 		jQuery(Property.Container)
 		.append(this.Struct.Root);
@@ -32,6 +32,14 @@ NUI.Image = function(opt) {
 
 	////////////////////////
 	////////////////////////
+
+	this.GetProperty = function(Key){
+		if(typeof Property[Key] !== "undefined")
+		return Property[Key];
+
+		else
+		return Property;
+	};
 
 	this.Destroy = NUI.Traits.DestroyFromStruct;
 	this.Get = NUI.Traits.GetFromStruct;

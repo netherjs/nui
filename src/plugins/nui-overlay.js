@@ -74,15 +74,26 @@ NUI.Overlay = function(Input) {
 	////////////////////////
 	////////////////////////
 
-	this.Destroy = NUI.Traits.DestroyFromStruct;
-	this.Get = NUI.Traits.GetFromStruct;
-	this.Hide = NUI.Traits.HideFromStruct;
-	this.Show = NUI.Traits.ShowFromStruct;
-
 	this.OnShow = function() {
 		jQuery(window).resize();
 		return;
 	};
+
+	this.GetProperty = function(Key){
+		if(typeof Property[Key] !== "undefined")
+		return Property[Key];
+
+		else
+		return Property;
+	};
+
+	this.Destroy = NUI.Traits.DestroyFromStruct.bind(this);
+	this.Get = NUI.Traits.GetFromStruct.bind(this);
+	this.Hide = NUI.Traits.HideFromStruct.bind(this);
+	this.Show = NUI.Traits.ShowFromStruct.bind(this);
+
+	////////////////////////
+	////////////////////////
 
 	if(Property.Show) {
 		this.Show();
