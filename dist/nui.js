@@ -1,5 +1,5 @@
 /*// nether-onescript //
-@date 2016-07-05 16:39:06
+@date 2016-09-09 15:18:35
 @files [
     "src\/nui-main.js",
     "src\/nui-traits.js",
@@ -523,9 +523,9 @@ NUI.Dialog = function(opt) {
 		if(Property.IsBusy) return;
 
 		if(Property.OnAccept) Property.OnAccept();
-		else this.Destroy();
+		else that.Destroy();
 
-		return this;
+		return that;
 	};
 
 	this.Cancel = function() {
@@ -538,9 +538,9 @@ NUI.Dialog = function(opt) {
 		if(Property.IsBusy) return;
 
 		if(Property.OnCancel) Property.OnCancel();
-		else this.Destroy();
+		else that.Destroy();
 
-		return this;
+		return that;
 	};
 
 	this.Close = function() {
@@ -553,9 +553,9 @@ NUI.Dialog = function(opt) {
 
 		if(Property.OnClose) Property.OnClose();
 		else if(Property.OnCancel) Property.OnCancel();
-		else this.Destroy();
+		else that.Destroy();
 
-		return this;
+		return that;
 	};
 
 	this.Struct.Root
