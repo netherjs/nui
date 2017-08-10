@@ -43,7 +43,7 @@ NUI.Overlay = function(Input) {
 
 	if(Property.HandleResize) {
 		jQuery(window).on('resize',function(){
-			var element = that.Struct.Root.find(':first-child');
+			var element = that.Struct.Root.find('>:first-child');
 
 			if(!element.attr('nui-moved'))
 			NUI.Util.CenterInParent(element);

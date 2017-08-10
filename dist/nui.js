@@ -1,5 +1,5 @@
 /*// nether-onescript //
-@date 2016-09-09 15:18:35
+@date 2017-08-10 13:58:41
 @files [
     "src\/nui-main.js",
     "src\/nui-traits.js",
@@ -726,7 +726,7 @@ NUI.Overlay = function(Input) {
 
 	if(Property.HandleResize) {
 		jQuery(window).on('resize',function(){
-			var element = that.Struct.Root.find(':first-child');
+			var element = that.Struct.Root.find('>:first-child');
 
 			if(!element.attr('nui-moved'))
 			NUI.Util.CenterInParent(element);
