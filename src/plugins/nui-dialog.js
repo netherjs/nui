@@ -110,6 +110,21 @@ NUI.Dialog = function(opt) {
 	////////////////////////
 	////////////////////////
 
+	this.OnShow = function() {
+		jQuery('body')
+		.addClass('NUI-Flag-Dialog-Open');
+
+		return;
+	};
+
+	this.OnDestroy = function() {
+		if(jQuery('.NUI-Dialog').length === 0)
+		jQuery('body')
+		.removeClass('NUI-Flag-Dialog-Open');
+
+		return;
+	};
+
 	this.Accept = function() {
 	/*//
 	@return self
@@ -217,6 +232,9 @@ NUI.Dialog = function(opt) {
 	this.Get = NUI.Traits.GetFromStruct;
 	this.Show = NUI.Traits.ShowFromStruct;
 	this.Hide = NUI.Traits.HideFromStruct;
+
+	if(Property.Show)
+	this.Show();
 };
 
 NUI.Dialog.prototype.valueOf = NUI.Traits.GetFromStruct;

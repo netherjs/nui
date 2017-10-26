@@ -1,5 +1,5 @@
 /*// nether-onescript //
-@date 2017-08-10 13:58:41
+@date 2017-10-26 11:38:53
 @files [
     "src\/nui-main.js",
     "src\/nui-traits.js",
@@ -162,7 +162,7 @@ NUI.Traits = {
 
 		// allow the element to do things it needs on show.
 		if(typeof this.OnDestroy === 'function')
-		this.OnHide();
+		this.OnDestroy();
 
 		// allow any custom show events.
 		if(typeof this.GetProperty === "function")
@@ -513,6 +513,21 @@ NUI.Dialog = function(opt) {
 	////////////////////////
 	////////////////////////
 
+	this.OnShow = function() {
+		jQuery('body')
+		.addClass('NUI-Flag-Dialog-Open');
+
+		return;
+	};
+
+	this.OnDestroy = function() {
+		if(jQuery('.NUI-Dialog').length === 0)
+		jQuery('body')
+		.removeClass('NUI-Flag-Dialog-Open');
+
+		return;
+	};
+
 	this.Accept = function() {
 	/*//
 	@return self
@@ -620,6 +635,9 @@ NUI.Dialog = function(opt) {
 	this.Get = NUI.Traits.GetFromStruct;
 	this.Show = NUI.Traits.ShowFromStruct;
 	this.Hide = NUI.Traits.HideFromStruct;
+
+	if(Property.Show)
+	this.Show();
 };
 
 NUI.Dialog.prototype.valueOf = NUI.Traits.GetFromStruct;
@@ -759,6 +777,15 @@ NUI.Overlay = function(Input) {
 
 	this.OnShow = function() {
 		jQuery(window).resize();
+		return;
+	};
+
+	this.OnDestroy = function() {
+
+		if(typeof Property.Content === 'object')
+		if(typeof Property.Content.Destroy === 'function')
+		Property.Content.Destroy();
+
 		return;
 	};
 

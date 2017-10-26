@@ -79,6 +79,15 @@ NUI.Overlay = function(Input) {
 		return;
 	};
 
+	this.OnDestroy = function() {
+
+		if(typeof Property.Content === 'object')
+		if(typeof Property.Content.Destroy === 'function')
+		Property.Content.Destroy();
+
+		return;
+	};
+
 	this.GetProperty = function(Key){
 		if(typeof Property[Key] !== "undefined")
 		return Property[Key];

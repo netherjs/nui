@@ -31,7 +31,7 @@ NUI.Traits = {
 
 		// allow the element to do things it needs on show.
 		if(typeof this.OnDestroy === 'function')
-		this.OnHide();
+		this.OnDestroy();
 
 		// allow any custom show events.
 		if(typeof this.GetProperty === "function")
